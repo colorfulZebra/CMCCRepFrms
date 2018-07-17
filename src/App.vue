@@ -14,10 +14,10 @@ export default {
 html,body,#app {
   height: 100%;
   width: 100%;
+  min-width: 960px;
   margin: 0;
   padding: 0;
-}
-#app {
+  background-color: #F9FAFC;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
