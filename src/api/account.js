@@ -1,7 +1,7 @@
 const _accounts = [
-  {id: '1', account: 'admin', password: 'admin'},
-  {id: '2', account: 'zhi', password: 'haha'},
-  {id: '3', account: 'zyg', password: 'haha'}
+  { account: 'admin', password: 'admin' },
+  { account: 'zhi', password: 'haha' },
+  { account: 'zyg', password: 'haha' }
 ]
 
 export default {

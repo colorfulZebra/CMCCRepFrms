@@ -1,6 +1,6 @@
 <template>
   <div id="loginpage">
-    <el-container v-loading="loading" element-loading-text="登录中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+    <el-container v-loading="loading" element-loading-text="登录中">
       <el-main>
         <el-row type="flex" justify="center">
           <el-col :span="8">
@@ -36,6 +36,7 @@
 <script>
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 import account from '../api/account'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Login',
@@ -49,6 +50,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('account', ['recordAccount']),
     tryLogin () {
       if (!this.login.account.length || !this.login.password.length) {
         this.$message({
@@ -65,9 +67,11 @@ export default {
             })
           } else {
             this.$message({
-              message: '成功',
+              message: '登录成功',
               type: 'success'
             })
+            this.recordAccount(this.login.account)
+            this.$router.push('/main')
           }
           this.loading = false
         })
@@ -113,8 +117,9 @@ export default {
     }
 
     .el-footer {
-      background-color: #303643;;
-      color: #ffffff;
+      background-color: whitesmoke;
+      border-top: solid 1px lightgrey;
+      color: dimgray;
       line-height: 60px;
     }
   }
