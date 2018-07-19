@@ -1,6 +1,6 @@
 <template>
   <div id="repadminpage">
-    <h1>Rep admin page</h1>
+    <h1>In processing ...</h1>
   </div>
 </template>
 

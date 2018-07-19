@@ -6,6 +6,9 @@
           <span style="float: left;"><img src="../assets/cmcc_logo.png"/></span>
           <el-menu-item index="/main"><font-awesome-icon class="icon" :icon="repfrmIcon"/>我的报表</el-menu-item>
           <el-menu-item index="/main/repadmin"><font-awesome-icon class="icon" :icon="configIcon"/>报表管理</el-menu-item>
+          <el-badge class="download" :value="120" :max="99">
+            <el-button size="small"><font-awesome-icon :icon="downloadIcon"/></el-button>
+          </el-badge>
           <el-dropdown style="float: right;" placement="bottom" @command="handleUserOptions">
             <span class="el-dropdown-link">
               <font-awesome-icon class="icon" :icon="userIcon"/>欢迎，{{ this.getLoginAccount() }}
@@ -25,7 +28,7 @@
 </template>
 
 <script>
-import { faUser, faDatabase, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faDatabase, faEdit, faBox } from '@fortawesome/free-solid-svg-icons'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -47,6 +50,9 @@ export default {
     },
     configIcon () {
       return faEdit
+    },
+    downloadIcon () {
+      return faBox
     }
   },
   methods: {
@@ -94,7 +100,7 @@ export default {
           height: auto;
           margin: {
             top: 15px;
-            right: 40px;
+            right: 60px;
             left: 40px;
           }
         }
@@ -102,12 +108,12 @@ export default {
       .el-dropdown-link {
         line-height: 60px;
         padding: {
-          right: 30px;
+          right: 10px;
           left: 30px;
           top: 2px;
           bottom: 2px;
         }
-        margin-right: 10px;
+        margin-right: 2px;
         font-size: 1.1em;
         &:hover {
           cursor: pointer;
@@ -123,6 +129,14 @@ export default {
     .icon {
       font-size: 1.2em;
       margin-right: 5px;
+    }
+    .download {
+      float: right;
+      margin-top: 12px;
+      margin-right: 30px;
+      .el-button {
+        font-size: 16px;
+      }
     }
   }
 }
