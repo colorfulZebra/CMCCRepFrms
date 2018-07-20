@@ -7,7 +7,9 @@
           <el-menu-item index="/main"><font-awesome-icon class="icon" :icon="repfrmIcon"/>我的报表</el-menu-item>
           <el-menu-item index="/main/repadmin"><font-awesome-icon class="icon" :icon="configIcon"/>报表管理</el-menu-item>
           <el-badge class="download" :value="120" :max="99">
-            <el-button size="small"><font-awesome-icon :icon="downloadIcon"/></el-button>
+            <el-tooltip placement="bottom-end" content="查看待下载报表集合">
+              <el-button size="small" type="info" @click="dialogDownloadVisible=true" circle><font-awesome-icon :icon="downloadIcon"/></el-button>
+            </el-tooltip>
           </el-badge>
           <el-dropdown style="float: right;" placement="bottom" @command="handleUserOptions">
             <span class="el-dropdown-link">
@@ -24,11 +26,30 @@
         <router-view/>
       </el-main>
     </el-container>
+    <el-dialog :visible.sync="dialogDownloadVisible" :close-on-click-modal="false">
+      <span slot="title" class="dialog-title">待下载报表集合</span>
+      <span class="dialog-body">
+        <el-table stripe style="width:100%" :data="tobeDownload" max-height="370">
+          <el-table-column label="报表名" prop="name"></el-table-column>
+          <el-table-column label="报表分类" prop="group"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="text">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </span>
+      <span slot="footer">
+        <el-button type="danger">清空&nbsp;<font-awesome-icon :icon="clearDownloadIcon"/></el-button>
+        <el-button type="primary">下载&nbsp;<font-awesome-icon :icon="downloadActionIcon"/></el-button>
+        <el-button @click="dialogDownloadVisible=false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { faUser, faDatabase, faEdit, faBox } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faDatabase, faEdit, faBox, faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -39,6 +60,21 @@ export default {
         type: 'error'
       })
       this.$router.push('/')
+    }
+  },
+  data () {
+    return {
+      dialogDownloadVisible: false,
+      tobeDownload: [
+        { name: '报表一', group: '收入类' },
+        { name: '报表二', group: '收入类' },
+        { name: '报表三', group: '流量类' },
+        { name: '报表四', group: '流量类' },
+        { name: '报表五', group: '收入类' },
+        { name: '报表六', group: '收入类' },
+        { name: '报表七', group: '客户类' },
+        { name: '报表八', group: '收入类' }
+      ]
     }
   },
   computed: {
@@ -53,6 +89,12 @@ export default {
     },
     downloadIcon () {
       return faBox
+    },
+    downloadActionIcon () {
+      return faDownload
+    },
+    clearDownloadIcon () {
+      return faTrashAlt
     }
   },
   methods: {
@@ -84,6 +126,15 @@ export default {
 #mainpage {
   height: 100%;
   width: 100%;
+
+  .dialog-title {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .dialog-body {
+    text-align: left;
+  }
 
   .el-container {
     height: 100%;
