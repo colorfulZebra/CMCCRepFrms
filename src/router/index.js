@@ -5,6 +5,8 @@ import Login from '@/components/Login'
 import MainPage from '@/components/MainPage'
 import RepFrms from '@/components/RepFrms'
 import RepFrmsAdmin from '@/components/RepFrmsAdmin'
+import RepFrmsAdminInfo from '@/components/RepFrmsAdminInfo'
+import RepFrmsAdminNew from '@/components/RepFrmsAdminNew'
 
 Vue.use(Router)
 
@@ -25,7 +27,17 @@ export default new Router({
         },
         {
           path: 'repadmin',
-          component: RepFrmsAdmin
+          component: RepFrmsAdmin,
+          children: [
+            {
+              path: '',
+              component: RepFrmsAdminInfo
+            },
+            {
+              path: 'new',
+              component: RepFrmsAdminNew
+            }
+          ]
         }
       ]
     },

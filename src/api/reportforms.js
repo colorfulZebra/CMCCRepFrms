@@ -16,7 +16,9 @@ const _repfrms = [
         frms: [
           { id: '3', frmname: '语音收入' },
           { id: '4', frmname: '宽带收入' },
-          { id: '5', frmname: '流量收入' }
+          { id: '5', frmname: '流量收入' },
+          { id: '12', frmname: '咪咕视频收入' },
+          { id: '11', frmname: '终端收入' }
         ]
       },
       {
@@ -25,6 +27,15 @@ const _repfrms = [
         frms: [
           { id: '6', frmname: '新发展' },
           { id: '7', frmname: '魔盒' }
+        ]
+      },
+      {
+        id: '4',
+        groupname: '客户类',
+        frms: [
+          { id: '8', frmname: '存量客户' },
+          { id: '9', frmname: '新发展客户' },
+          { id: '10', frmname: '4G客户' }
         ]
       }
     ]

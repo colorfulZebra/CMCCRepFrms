@@ -1,6 +1,6 @@
 <template>
   <div id="repadminpage">
-    <h1>In processing ...</h1>
+    <router-view/>
   </div>
 </template>
 
@@ -13,8 +13,10 @@ export default {
 
 #repadminpage {
   width: 100%;
+  height: 100%;
   padding: 0;
   margin: 0;
+  text-align: left;
 }
 
 </style>

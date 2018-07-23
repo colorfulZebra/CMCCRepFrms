@@ -29,10 +29,10 @@
         </el-table>
         <el-button-group v-show="curfrmdef.columns!==undefined && curfrmdef.data.length>0" class="table-options">
           <el-tooltip content="下载此报表" placement="bottom-end">
-            <el-button size="small"><font-awesome-icon :icon="downloadIcon"/></el-button>
+            <el-button type="primary" size="small" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
           </el-tooltip>
           <el-tooltip content="将报表加入待下载报表集合" placement="bottom-end">
-            <el-button size="small"><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
+            <el-button type="success" size="small" plain><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
           </el-tooltip>
         </el-button-group>
       </el-main>
