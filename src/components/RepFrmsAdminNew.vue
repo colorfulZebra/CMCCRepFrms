@@ -1,15 +1,32 @@
 <template>
-  <div>
-    <br>
-    <br>
-    <br>
+  <div id="repfrmnew">
     <el-steps :active="active" finish-status="success">
-      <el-step title="步骤 1"></el-step>
-      <el-step title="步骤 2"></el-step>
-      <el-step title="步骤 3"></el-step>
+      <el-step title="1,定义报表表头"></el-step>
+      <el-step title="2,定义报表列"></el-step>
+      <el-step title="3,汇总确认"></el-step>
     </el-steps>
-    <el-button style="margin-top: 12px; float: right; margin-right: 50px;" @click="back">返回</el-button>
-    <el-button style="margin-top: 12px; float: right; margin-right: 10px;" @click="next">下一步</el-button>
+    <div class="control-btns">
+      <el-button size="small" @click="back">返回管理页面</el-button>
+      <el-button type="primary" size="small" @click="next" plain>下一步</el-button>
+    </div>
+    <div class="step-panel" v-show="active === 0">
+      <br>
+      <h3>输入表名</h3>
+      <el-row>
+        <el-col :span="8">
+          <el-input placeholder="请输入表名"></el-input>
+        </el-col>
+      </el-row>
+      <h3>定义表头</h3>
+    </div>
+    <div class="step-panel" v-show="active === 1">
+      <br>
+      <h3>第二步</h3>
+    </div>
+    <div class="step-panel" v-show="active === 2">
+      <br>
+      <h3>汇总信息</h3>
+    </div>
   </div>
 </template>
 
@@ -33,9 +50,32 @@ export default {
 
 <style lang="scss" scoped>
 
-.el-steps {
-  margin-left: 50px;
-  margin-right: 50px;
+#repfrmnew {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  .el-steps {
+    margin: {
+      left: 50px;
+      right: 50px;
+    }
+    .el-step {
+      margin-top: 50px;
+    }
+  }
+  .el-button {
+    float: right;
+    margin: {
+      top: 14px;
+      right: 10px;
+    }
+  }
+  .control-btns {
+    margin-right: 50px;
+  }
+  .step-panel {
+    margin: 50px;
+  }
 }
 
 </style>
