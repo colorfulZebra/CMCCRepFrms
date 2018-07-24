@@ -34,15 +34,22 @@
           <el-table-column label="报表分类" prop="group"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="text">删除</el-button>
+              <el-button type="text" style="color: Salmon;">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </span>
       <span slot="footer">
-        <el-button type="danger">清空&nbsp;<font-awesome-icon :icon="clearDownloadIcon"/></el-button>
+        <el-popover placement="top" width="160" v-model="emptyListVisible">
+          <p>确定要清空列表？</p>
+          <div style="text-align: right; margin: 0;">
+            <el-button size="mini" type="text" @click="emptyListVisible = false">取消</el-button>
+            <el-button type="danger" size="mini" @click="emptyListVisible = false">确定</el-button>
+          </div>
+          <el-button type="danger" slot="reference">清空&nbsp;<font-awesome-icon :icon="clearDownloadIcon"/></el-button>
+        </el-popover>
         <el-button type="primary">下载&nbsp;<font-awesome-icon :icon="downloadActionIcon"/></el-button>
-        <el-button @click="dialogDownloadVisible=false">关闭</el-button>
+        <el-button @click="emptyListVisible=false;dialogDownloadVisible=false">关闭</el-button>
       </span>
     </el-dialog>
   </div>
@@ -65,6 +72,7 @@ export default {
   data () {
     return {
       dialogDownloadVisible: false,
+      emptyListVisible: false,
       tobeDownload: [
         { name: '报表一', group: '收入类' },
         { name: '报表二', group: '收入类' },

@@ -2,27 +2,33 @@
   <div id="repfrminfopage" v-loading="loading">
     <el-row class="info-header">
       <el-col :span="24">
-        <el-button type="primary" plain>新建报表集合&nbsp;<font-awesome-icon :icon="newgroupIcon"/></el-button>
+        <el-popover v-model="newgroupVisible" placement="right-start">
+          <el-input style="margin-bottom: 10px;" placeholder="请输入报表集合名"></el-input>
+          <el-button type="primary" size="small">确定</el-button>
+          <el-button type="text" size="small" @click="newgroupVisible = false">取消</el-button>
+          <el-button type="primary" slot="reference" plain>新建报表集合&nbsp;<font-awesome-icon :icon="newgroupIcon"/></el-button>
+        </el-popover>
       </el-col>
     </el-row>
     <div v-for="gp in groups" :key="gp.id" class="group-item">
       <h3>
         {{ gp.groupname }}
-        <el-button type="primary" size="small" @click="newRepFrm()" plain circle>
-          <font-awesome-icon :icon="newgroupIcon"/>
+        <el-button icon="el-icon-plus" type="primary" style="font-size: 10px; padding: 5px;" @click="newRepFrm()" plain>
         </el-button>
       </h3>
       <hr/>
       <el-row>
-        <el-col :span="6" v-for="frm in gp.frms" :key="frm.id">
+        <el-col :span="8" v-for="frm in gp.frms" :key="frm.id">
           <el-card class="frm-card-item">
             <div slot="header">
               <span>{{ frm.frmname }}</span>
               <el-dropdown szie="small" trigger="click" :hide-on-click="false" :ref="`dropdown-${gp.id}-${frm.id}`" class="frm-card-option">
                 <span class="el-dropdown-link">
-                  设置可见<i class="el-icon-arrow-down el-icon--right"></i>
+                  设置<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
+                  <el-button type="text" style="color: Salmon;" @click="deleteRepFrm()">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button>
+                  <el-dropdown-item divided>权限管理</el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工A</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工B</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工C</el-checkbox></el-dropdown-item>
@@ -30,8 +36,25 @@
                   <el-button type="text" @click="saveHide(gp.id, frm.id)">确定</el-button><el-button type="text" @click="cancelHide(gp.id, frm.id)">取消</el-button>
                 </el-dropdown-menu>
               </el-dropdown>
-              <!--<el-button class="frm-card-option" type="text">操作按钮</el-button>-->
             </div>
+            <h5>表头<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
+            <el-tag @close="deleteHead()" closable>西安</el-tag>
+            <el-tag @close="deleteHead()" type="success" closable>铜川</el-tag>
+            <el-tag @close="deleteHead()" type="info" closable>咸阳</el-tag>
+            <el-tag @close="deleteHead()" type="warning" closable>宝鸡</el-tag>
+            <el-tag @close="deleteHead()" closable>渭南</el-tag>
+            <el-tag @close="deleteHead()" type="success" closable>汉中</el-tag>
+            <el-tag @close="deleteHead()" type="info" closable>安康</el-tag>
+            <el-tag @close="deleteHead()" type="warning" closable>商洛</el-tag>
+            <el-tag @close="deleteHead()" closable>榆林</el-tag>
+            <el-tag @close="deleteHead()" type="success" closable>延安</el-tag>
+            <h5>列<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
+            <el-tag @close="deleteColumn()" closable>2018年1月流量同比增幅</el-tag>
+            <el-tag @close="deleteColumn()" type="success" closable>2018年2月流量同比增幅</el-tag>
+            <el-tag @close="deleteColumn()" type="info" closable>2018年3月流量同比增幅</el-tag>
+            <el-tag @close="deleteColumn()" type="warning" closable>2018年4月流量同比增幅</el-tag>
+            <el-tag @close="deleteColumn()" closable>2018年5月流量同比增幅</el-tag>
+            <el-tag @close="deleteColumn()" type="success" closable>2018年6月流量同比增幅</el-tag>
           </el-card>
         </el-col>
       </el-row>
@@ -40,7 +63,7 @@
 </template>
 
 <script>
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
 import { mapGetters } from 'vuex'
 
@@ -48,7 +71,8 @@ export default {
   data () {
     return {
       groups: [],
-      loading: false
+      loading: false,
+      newgroupVisible: false
     }
   },
   mounted () {
@@ -61,6 +85,9 @@ export default {
   computed: {
     newgroupIcon () {
       return faPlus
+    },
+    deleteIcon () {
+      return faTrashAlt
     }
   },
   methods: {
@@ -76,6 +103,27 @@ export default {
       if (dropdownObj.length && dropdownObj[0].hide) {
         dropdownObj[0].hide()
       }
+    },
+    deleteRepFrm () {
+      this.$confirm('此操作将删除报表，继续？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {})
+    },
+    deleteHead () {
+      this.$confirm('此操作将删除报表表头，继续？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {})
+    },
+    deleteColumn () {
+      this.$confirm('此操作将删除报表列，继续？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {})
     }
   }
 }
@@ -110,12 +158,12 @@ export default {
       margin-right: 30px;
     }
     .frm-card-item {
-      width: 85%;
-      margin-left: 30px;
-      margin-right: 10px;
-      margin-top: 30px;
-      &:hover {
-        transform:scale(1.02)
+      width: 88%;
+      margin: {
+        left: 30px;
+        right: 20px;
+        top: 10px;
+        bottom: 30px;
       }
       .frm-card-option {
         float: right;
@@ -123,6 +171,16 @@ export default {
         .el-dropdown-link {
           cursor: pointer;
           color: #409EFF;
+        }
+      }
+      h5 {
+        margin: 5px;
+      }
+      .el-tag {
+        margin: {
+          bottom: 10px;
+          right: 5px;
+          left: 5px;
         }
       }
     }
