@@ -38,16 +38,9 @@
               </el-dropdown>
             </div>
             <h5>表头<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
-            <el-tag @close="deleteHead()" closable>西安</el-tag>
-            <el-tag @close="deleteHead()" type="success" closable>铜川</el-tag>
-            <el-tag @close="deleteHead()" type="info" closable>咸阳</el-tag>
-            <el-tag @close="deleteHead()" type="warning" closable>宝鸡</el-tag>
-            <el-tag @close="deleteHead()" closable>渭南</el-tag>
-            <el-tag @close="deleteHead()" type="success" closable>汉中</el-tag>
-            <el-tag @close="deleteHead()" type="info" closable>安康</el-tag>
-            <el-tag @close="deleteHead()" type="warning" closable>商洛</el-tag>
-            <el-tag @close="deleteHead()" closable>榆林</el-tag>
-            <el-tag @close="deleteHead()" type="success" closable>延安</el-tag>
+            <draggable v-model="exampleHead" @end="onEnd">
+              <el-tag v-for="head in exampleHead" :key="head.label" :type="head.type" closable @close="deleteHead()">{{ head.label }}</el-tag>
+            </draggable>
             <h5>列<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
             <el-tag @close="deleteColumn()" closable>2018年1月流量同比增幅</el-tag>
             <el-tag @close="deleteColumn()" type="success" closable>2018年2月流量同比增幅</el-tag>
@@ -66,13 +59,29 @@
 import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
 import { mapGetters } from 'vuex'
+import draggable from 'vuedraggable'
 
 export default {
+  components: {
+    draggable
+  },
   data () {
     return {
       groups: [],
       loading: false,
-      newgroupVisible: false
+      newgroupVisible: false,
+      exampleHead: [
+        { type: '', label: '西安' },
+        { type: 'success', label: '铜川' },
+        { type: 'info', label: '咸阳' },
+        { type: 'warning', label: '宝鸡' },
+        { type: '', label: '渭南' },
+        { type: 'success', label: '汉中' },
+        { type: 'info', label: '安康' },
+        { type: 'warning', label: '商洛' },
+        { type: '', label: '榆林' },
+        { type: 'success', label: '延安' }
+      ]
     }
   },
   mounted () {
@@ -124,6 +133,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {})
+    },
+    onEnd () {
+      console.log(this.exampleHead)
     }
   }
 }
@@ -176,11 +188,14 @@ export default {
       h5 {
         margin: 5px;
       }
-      .el-tag {
+      span.el-tag {
         margin: {
           bottom: 10px;
           right: 5px;
           left: 5px;
+        }
+        &:hover {
+          cursor: pointer;
         }
       }
     }

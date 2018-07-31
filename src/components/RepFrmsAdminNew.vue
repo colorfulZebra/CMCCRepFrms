@@ -12,10 +12,10 @@
     </div>
     <div class="step-panel" v-show="active === 0">
       <br>
-      <h3>输入表名</h3>
+      <h3>定义表名</h3>
       <el-row>
         <el-col :span="9">
-          <el-input placeholder="请输入表名"></el-input>
+          <el-input v-model="repfrmname" placeholder="请输入表名"></el-input>
         </el-col>
       </el-row>
       <br>
@@ -25,14 +25,14 @@
           <el-cascader :options="headOptions" v-model="newhead" @change="newHeadChanged" clearable></el-cascader>
         </el-col>
         <el-col :span="1">
-          <el-button type="primary" size="small" :disabled="newhead.length === 0" @click="addNewHead()" plain><font-awesome-icon :icon="addIcon"/></el-button>
+          <el-button type="primary" size="small" :disabled="checkNewHead" @click="addNewHead()" plain><font-awesome-icon :icon="addIcon"/></el-button>
         </el-col>
       </el-row>
       <h5>已定义表头</h5><hr>
       <el-row>
         <el-col :span="24" v-show="newheads.length === 0">(空)</el-col>
         <el-col :span="24" v-show="newheads.length > 0">
-          <el-tag v-for="(nh, idx) in newheads" :key="idx" :type="tagColors[idx % 4]" @close="deleteNewHead(idx)" closable>{{ nh }}</el-tag>
+          <el-tag v-for="(nh, idx) in newheads" :key="nh" :type="tagColors[idx % 4]" closable @close="deleteNewHead(idx)">{{ nh }}</el-tag>
         </el-col>
       </el-row>
     </div>
@@ -41,23 +41,27 @@
       <h3>定义列</h3>
       <el-row>
         <el-col :span="8">
-          <el-cascader :options="columnOptions" clearable></el-cascader>
+          <el-cascader :options="columnOptions" v-model="newcolumn" clearable></el-cascader>
         </el-col>
         <el-col :span="1">
-          <el-button type="primary" size="small" :disabled="newcolumn.length === 0" plain><font-awesome-icon :icon="addIcon"/></el-button>
+          <el-button type="primary" size="small" :disabled="checkNewColumn" @click="addNewColumn()" plain><font-awesome-icon :icon="addIcon"/></el-button>
         </el-col>
       </el-row>
       <h5>已定义列</h5><hr>
       <el-row>
         <el-col :span="24" v-show="newcolumns.length === 0">(空)</el-col>
         <el-col :span="24" v-show="newcolumns.length > 0">
-          <el-tag v-for="(nc, idx) in newcolumns" :key="idx" :type="tagColors[idx % 4]" closable>{{ nc }}</el-tag>
+          <el-tag v-for="(nc, idx) in newcolumns" :key="nc" :type="tagColors[idx % 4]" closable @close="deleteNewColumn(idx)">{{ nc }}</el-tag>
         </el-col>
       </el-row>
     </div>
     <div class="step-panel" v-show="active === 2">
       <br>
-      <h3>汇总信息</h3>
+      <h3>{{ repfrmname }}</h3>
+      <el-table :data="templateTable" border>
+        <el-table-column prop="head" label="地市"></el-table-column>
+        <el-table-column v-for="(c, idx) in newcolumns" :key="c" :prop="`col${idx}`" :label="c"></el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -70,6 +74,7 @@ export default {
     return {
       active: 0,
       tagColors: ['', 'success', 'info', 'warning'],
+      repfrmname: '',
       newhead: [],
       headOptions: [
         {
@@ -101,6 +106,7 @@ export default {
               value: '同比增幅',
               label: '同比增幅',
               children: [
+                { value: '2018年1月@2018年2月@2018年3月@2018年4月@2018年5月@2018年6月@2018年7月', label: '2018年' },
                 { value: '2018年1月', label: '2018年1月' },
                 { value: '2018年2月', label: '2018年2月' },
                 { value: '2018年3月', label: '2018年3月' },
@@ -113,7 +119,8 @@ export default {
           ]
         }
       ],
-      newcolumns: []
+      newcolumns: [],
+      templateTable: []
     }
   },
   computed: {
@@ -128,10 +135,20 @@ export default {
     },
     nextBtn () {
       return this.active >= 2 ? { text: '完成', type: 'success' } : { text: '下一步', type: 'primary' }
+    },
+    checkNewHead () {
+      return this.newhead.length === 0 || this.newheads.includes(this.newhead[this.newhead.length - 1])
+    },
+    checkNewColumn () {
+      return this.newcolumn.length === 0 || this.newcolumns.includes(this.newcolumn.slice(this.newcolumn.length - 1).concat(this.newcolumn.slice(0, this.newcolumn.length - 1)).join(''))
     }
   },
   methods: {
     next () {
+      if (this.active === 1) {
+        this._genReportTemplate()
+        console.log(this.templateTable)
+      }
       if (this.active++ > 2) this.active = 0
     },
     prev () {
@@ -149,6 +166,29 @@ export default {
     },
     deleteNewHead (idx) {
       this.newheads.splice(idx, 1)
+    },
+    addNewColumn () {
+      let lastitems = this.newcolumn[this.newcolumn.length - 1].split('@')
+      let items = lastitems.map(li => {
+        let tmp = this.newcolumn.slice(0, this.newcolumn.length - 1)
+        tmp.unshift(li)
+        return tmp.join('')
+      })
+      this.newcolumns.push(...items)
+      this.newcolumn = []
+    },
+    deleteNewColumn (idx) {
+      this.newcolumns.splice(idx, 1)
+    },
+    _genReportTemplate () {
+      this.templateTable = []
+      for (let i = 0; i < this.newheads.length; i++) {
+        let record = { head: this.newheads[i] }
+        for (let j = 0; j < this.newcolumns.length; j++) {
+          record[`col${j + 1}`] = ''
+        }
+        this.templateTable.push(record)
+      }
     }
   }
 }
