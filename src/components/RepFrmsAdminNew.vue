@@ -99,21 +99,43 @@ export default {
       newcolumn: [],
       columnOptions: [
         {
-          value: '流量',
-          label: '流量',
+          value: '业务',
+          label: '业务',
           children: [
             {
-              value: '同比增幅',
-              label: '同比增幅',
+              value: '流量',
+              label: '流量',
               children: [
-                { value: '2018年1月@2018年2月@2018年3月@2018年4月@2018年5月@2018年6月@2018年7月', label: '2018年' },
-                { value: '2018年1月', label: '2018年1月' },
-                { value: '2018年2月', label: '2018年2月' },
-                { value: '2018年3月', label: '2018年3月' },
-                { value: '2018年4月', label: '2018年4月' },
-                { value: '2018年5月', label: '2018年5月' },
-                { value: '2018年6月', label: '2018年6月' },
-                { value: '2018年7月', label: '2018年7月' }
+                {
+                  value: '同比增幅',
+                  label: '同比增幅',
+                  children: [
+                    { value: '2018年1月@2018年2月@2018年3月@2018年4月@2018年5月@2018年6月@2018年7月', label: '2018年' },
+                    { value: '2018年1月', label: '2018年1月' },
+                    { value: '2018年2月', label: '2018年2月' },
+                    { value: '2018年3月', label: '2018年3月' },
+                    { value: '2018年4月', label: '2018年4月' },
+                    { value: '2018年5月', label: '2018年5月' },
+                    { value: '2018年6月', label: '2018年6月' },
+                    { value: '2018年7月', label: '2018年7月' }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          value: '收入',
+          label: '收入',
+          children: [
+            {
+              value: '流量收入',
+              label: '流量收入',
+              children: [
+                { value: '当月完成', label: '当月完成' },
+                { value: '当月同比', label: '当月同比' },
+                { value: '本年累计', label: '本年累计' },
+                { value: '累计同比', label: '累计同比' }
               ]
             }
           ]

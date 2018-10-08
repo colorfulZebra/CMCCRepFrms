@@ -27,7 +27,8 @@
                   设置<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-button type="text" style="color: Salmon;" @click="deleteRepFrm()">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button>
+                  <el-dropdown-item><el-button type="text">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
+                  <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm()">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item divided>权限管理</el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工A</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工B</el-checkbox></el-dropdown-item>
@@ -56,7 +57,7 @@
 </template>
 
 <script>
-import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrashAlt, faCopy } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
@@ -97,6 +98,9 @@ export default {
     },
     deleteIcon () {
       return faTrashAlt
+    },
+    copyIcon () {
+      return faCopy
     }
   },
   methods: {

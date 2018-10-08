@@ -1,11 +1,15 @@
+const axios = require('axios')
+/*
 const _accounts = [
   { account: 'admin', password: 'admin' },
   { account: 'zhi', password: 'haha' },
   { account: 'zyg', password: 'haha' }
 ]
+*/
 
 export default {
   login ({ account, password }) {
+    /*
     return new Promise((resolve, reject) => {
       let flag = false
       _accounts.map(accinfo => {
@@ -30,6 +34,11 @@ export default {
           })
         }
       }, 1000)
+    })
+    */
+    return axios.post('http://localhost:9000/api/user/login', {
+      name: account,
+      password
     })
   }
 }

@@ -60,7 +60,7 @@ export default {
       } else {
         this.loading = true
         account.login(this.login).then((response) => {
-          if (response.result.code) {
+          if (!response.data.result) {
             this.$message({
               message: '账户或密码错误',
               type: 'error'

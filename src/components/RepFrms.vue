@@ -27,6 +27,19 @@
         <el-table v-show="curfrmdef.columns!==undefined" :data="curfrmdef.data" max-height="600">
           <el-table-column v-for="(col,idx) in curfrmdef.columns" :key="col.name" :prop="'col'+idx" :label="col.name" :fixed="idx===0"></el-table-column>
         </el-table>
+        <el-dropdown v-show="curfrmdef.columns!==undefined">
+          <span class="el-dropdown-link">
+            选择帐期<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>2018年1月</el-dropdown-item>
+            <el-dropdown-item>2018年2月</el-dropdown-item>
+            <el-dropdown-item>2018年3月</el-dropdown-item>
+            <el-dropdown-item>2018年4月</el-dropdown-item>
+            <el-dropdown-item>2018年5月</el-dropdown-item>
+            <el-dropdown-item>2018年6月</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
         <el-button-group v-show="curfrmdef.columns!==undefined && curfrmdef.data.length>0" class="table-options">
           <el-tooltip content="下载此报表" placement="bottom-end">
             <el-button type="primary" size="small" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
@@ -141,6 +154,15 @@ export default {
       }
       .el-table {
         width: 100%;
+      }
+      .el-dropdown {
+        float: left;
+        margin-left: 10px;
+        margin-top: 20px;
+        .el-dropdown-link {
+          cursor: pointer;
+          color: #409EFF;
+        }
       }
       .table-options {
         float: right;
