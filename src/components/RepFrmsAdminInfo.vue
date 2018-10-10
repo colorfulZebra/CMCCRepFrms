@@ -87,8 +87,8 @@ export default {
   },
   mounted () {
     this.loading = true
-    repfrms.getFrms(this.getLoginAccount()).then((data) => {
-      this.groups = data
+    repfrms.getFrms(this.getLoginAccount()).then((response) => {
+      this.groups = response.data.groups
       this.loading = false
     })
   },

@@ -52,30 +52,23 @@ export default {
   methods: {
     ...mapActions('account', ['recordAccount']),
     tryLogin () {
-      if (!this.login.account.length || !this.login.password.length) {
+      this.loading = true
+      account.login(this.login).then((res) => {
         this.$message({
-          message: '请输入账户和密码',
-          type: 'warning'
+          message: '登录成功',
+          type: 'success'
         })
-      } else {
-        this.loading = true
-        account.login(this.login).then((response) => {
-          if (!response.data.result) {
-            this.$message({
-              message: '账户或密码错误',
-              type: 'error'
-            })
-          } else {
-            this.$message({
-              message: '登录成功',
-              type: 'success'
-            })
-            this.recordAccount(this.login.account)
-            this.$router.push('/main')
-          }
-          this.loading = false
+        this.loading = false
+        this.recordAccount(this.login.account)
+        this.$router.push('/main')
+      }).catch((err) => {
+        let errels = err.message.split('#')
+        this.$message({
+          message: errels[1],
+          type: errels[0]
         })
-      }
+        this.loading = false
+      })
     }
   },
   computed: {

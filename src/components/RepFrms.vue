@@ -70,10 +70,20 @@ export default {
   },
   mounted () {
     this.repfrmsLoading = true
-    repfrm.getFrms(this.getLoginAccount()).then((data) => {
-      this.repfrms = data
-      this.repfrmsLoading = false
-    })
+    let owner = this.getLoginAccount()
+    if (owner.length) {
+      repfrm.getFrms(owner).then((response) => {
+        this.repfrms = response.data.groups
+        this.repfrmsLoading = false
+      }).catch(() => {
+        this.repfrms = []
+        this.$message({
+          type: 'error',
+          message: '获取服务器用户数据错误'
+        })
+        this.repfrmsLoading = false
+      })
+    }
   },
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
