@@ -69,33 +69,73 @@ export default {
 
   getFrms (owner) {
     return new Promise((resolve, reject) => {
-      axios.get(restRepfrm.queryByOwner(owner)).then((response) => {
-        let setid = 1
-        let tableid = 1
-        let repfrm = {}
-        repfrm.data = {
-          owner,
-          groups: []
-        }
-        for (let el of response.data.data) {
-          let tmpset = {
-            id: setid++,
-            groupname: el.name,
-            frms: []
+      if (owner.length === 0) {
+        reject(new Error('登录信息丢失，请重新登录'))
+      } else {
+        axios.get(restRepfrm.queryByOwner(owner)).then((response) => {
+          let setid = 1
+          let tableid = 1
+          let repfrm = {}
+          repfrm.data = {
+            owner,
+            groups: []
           }
-          for (let tabel of el.tables) {
-            let tmptable = {
-              id: tableid++,
-              frmname: tabel.name
+          for (let el of response.data.data) {
+            let tmpset = {
+              id: setid.toString(),
+              groupname: el.name,
+              frms: []
             }
-            tmpset.frms.push(tmptable)
+            for (let tabel of el.tables) {
+              let tmptable = {
+                id: tableid.toString(),
+                frmname: tabel.name
+              }
+              tmpset.frms.push(tmptable)
+              tableid += 1
+            }
+            repfrm.data.groups.push(tmpset)
+            setid += 1
           }
-          repfrm.data.groups.push(tmpset)
-        }
-        resolve(repfrm)
-      }).catch((err) => {
-        reject(err)
-      })
+          resolve(repfrm)
+        }).catch((err) => {
+          reject(err)
+        })
+      }
+    })
+  },
+
+  newTableSet (owner, name, exsitedNames) {
+    return new Promise((resolve, reject) => {
+      if (owner.length === 0) {
+        reject(new Error('请指定表集合所有者'))
+      } else if (!/^[\u4e00-\u9fa5\d_]{2,}$/.test(name)) {
+        reject(new Error('表集合名必须为两位以上汉字、数字或者下划线'))
+      } else if (exsitedNames.includes(name)) {
+        reject(new Error('表集合已存在，请重新命名'))
+      } else {
+        axios.post(restRepfrm.newTableSet, { owner, name }).then((response) => {
+          resolve(response)
+        }).catch((err) => {
+          reject(new Error(err))
+        })
+      }
+    })
+  },
+
+  deleteTableSet (owner, name) {
+    return new Promise((resolve, reject) => {
+      if (owner.length === 0) {
+        reject(new Error('请指定待删除表集合所有着'))
+      } else if (!/^[\u4e00-\u9fa5\d_]{2,}$/.test(name)) {
+        reject(new Error('待删除表集合名称非法'))
+      } else {
+        axios.delete(restRepfrm.deleteTableSet, { data: { owner, name } }).then((response) => {
+          resolve(response)
+        }).catch((err) => {
+          reject(new Error(err))
+        })
+      }
     })
   }
 }

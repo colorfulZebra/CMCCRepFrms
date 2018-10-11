@@ -60,6 +60,7 @@ export default {
         })
         this.loading = false
         this.recordAccount(this.login.account)
+        this.$cookie.set('user', this.login.account, { expires: '1h' })
         this.$router.push('/main')
       }).catch((err) => {
         let errels = err.message.split('#')

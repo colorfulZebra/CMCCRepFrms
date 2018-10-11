@@ -56,13 +56,14 @@
 <script>
 import repfrm from '../api/reportforms'
 import frmdef from '../api/repfrmdefs'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { faFolderOpen, faThList, faFile, faDownload, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 export default {
   data () {
     return {
       repfrms: [],
+      owner: '',
       repfrmsLoading: false,
       curfrmdef: {},
       frmdefLoading: false
@@ -70,9 +71,14 @@ export default {
   },
   mounted () {
     this.repfrmsLoading = true
-    let owner = this.getLoginAccount()
-    if (owner.length) {
-      repfrm.getFrms(owner).then((response) => {
+    this.owner = this.getLoginAccount()
+    let userCookie = this.$cookie.get('user')
+    if (!!this.owner === false && !!userCookie === true) {
+      this.owner = userCookie
+      this.recordAccount(userCookie)
+    }
+    if (this.owner.length) {
+      repfrm.getFrms(this.owner).then((response) => {
         this.repfrms = response.data.groups
         this.repfrmsLoading = false
       }).catch(() => {
@@ -83,10 +89,18 @@ export default {
         })
         this.repfrmsLoading = false
       })
+    } else {
+      this.repfrmsLoading = false
+      this.$message({
+        message: '登录信息过期，请重新登录',
+        type: 'error'
+      })
+      this.$router.push('/')
     }
   },
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
+    ...mapActions('account', ['recordAccount']),
     selectFrm (key) {
       this.frmdefLoading = true
       frmdef.getFrmDef(key).then((data) => {

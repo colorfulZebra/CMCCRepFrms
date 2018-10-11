@@ -3,8 +3,8 @@
     <el-row class="info-header">
       <el-col :span="24">
         <el-popover v-model="newgroupVisible" placement="right-start">
-          <el-input style="margin-bottom: 10px;" placeholder="请输入报表集合名"></el-input>
-          <el-button type="primary" size="small">确定</el-button>
+          <el-input style="margin-bottom: 10px;" v-model="newGroupname" placeholder="请输入报表集合名"></el-input>
+          <el-button type="primary" size="small" @click="newTableSet()">确定</el-button>
           <el-button type="text" size="small" @click="newgroupVisible = false">取消</el-button>
           <el-button type="primary" slot="reference" plain>新建报表集合&nbsp;<font-awesome-icon :icon="newgroupIcon"/></el-button>
         </el-popover>
@@ -14,6 +14,8 @@
       <h3>
         {{ gp.groupname }}
         <el-button icon="el-icon-plus" type="primary" style="font-size: 10px; padding: 5px;" @click="newRepFrm()" plain>
+        </el-button>
+        <el-button icon="el-icon-close" type="danger" style="font-size: 10px; padding: 5px; margin-left: 0;" @click="deleteTableSet(gp.groupname)" plain>
         </el-button>
       </h3>
       <hr/>
@@ -59,7 +61,7 @@
 <script>
 import { faPlus, faTrashAlt, faCopy } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import draggable from 'vuedraggable'
 
 export default {
@@ -69,6 +71,7 @@ export default {
   data () {
     return {
       groups: [],
+      owner: '',
       loading: false,
       newgroupVisible: false,
       exampleHead: [
@@ -82,15 +85,37 @@ export default {
         { type: 'warning', label: '商洛' },
         { type: '', label: '榆林' },
         { type: 'success', label: '延安' }
-      ]
+      ],
+      newGroupname: ''
     }
   },
   mounted () {
     this.loading = true
-    repfrms.getFrms(this.getLoginAccount()).then((response) => {
-      this.groups = response.data.groups
+    this.owner = this.getLoginAccount()
+    let userCookie = this.$cookie.get('user')
+    if (!!this.owner === false && !!userCookie === true) {
+      this.owner = userCookie
+      this.recordAccount(userCookie)
+    }
+    if (this.owner.length) {
+      repfrms.getFrms(this.getLoginAccount()).then((response) => {
+        this.groups = response.data.groups
+        this.loading = false
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '获取服务器用户数据错误'
+        })
+        this.loading = false
+      })
+    } else {
       this.loading = false
-    })
+      this.$message({
+        message: '登录信息过期，请重新登录',
+        type: 'error'
+      })
+      this.$router.push('/')
+    }
   },
   computed: {
     newgroupIcon () {
@@ -105,6 +130,22 @@ export default {
   },
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
+    ...mapActions('account', ['recordAccount']),
+    newTableSet () {
+      let exsitedNames = this.groups.map(gp => gp.groupname)
+      repfrms.newTableSet(this.owner, this.newGroupname, exsitedNames).then((reponse) => {
+        this.$message({
+          type: 'success',
+          message: '成功新建表集合'
+        })
+        this.$router.go()
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
+      })
+    },
     newRepFrm () {
       this.$router.push('/main/repadmin/new')
     },
@@ -116,6 +157,29 @@ export default {
       if (dropdownObj.length && dropdownObj[0].hide) {
         dropdownObj[0].hide()
       }
+    },
+    deleteTableSet (name) {
+      this.$confirm('此操作将删除报表集，请确定报表集合为空，继续？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        repfrms.deleteTableSet(this.owner, name).then((response) => {
+          if (!response.data.result) {
+            this.$message({
+              type: 'error',
+              message: response.data.data
+            })
+          } else {
+            this.$router.go()
+          }
+        }).catch((err) => {
+          this.$message({
+            type: 'error',
+            message: err.message
+          })
+        })
+      })
     },
     deleteRepFrm () {
       this.$confirm('此操作将删除报表，继续？', '提示', {

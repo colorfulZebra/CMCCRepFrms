@@ -2,7 +2,7 @@
   <div id="mainpage">
     <el-container>
       <el-header>
-        <el-menu default-active="/main" mode="horizontal" router>
+        <el-menu :default-active="curActivePage" mode="horizontal" router>
           <span style="float: left;"><img src="../assets/cmcc_logo.png"/></span>
           <el-menu-item index="/main"><font-awesome-icon class="icon" :icon="repfrmIcon"/>我的报表</el-menu-item>
           <el-menu-item index="/main/repadmin"><font-awesome-icon class="icon" :icon="configIcon"/>报表管理</el-menu-item>
@@ -61,18 +61,25 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   mounted () {
+    let userCookie = this.$cookie.get('user')
     if (!!this.getLoginAccount() === false) {
-      this.$message({
-        message: '登录信息过期，请重新登录',
-        type: 'error'
-      })
-      this.$router.push('/')
+      if (!!userCookie === false) {
+        this.$message({
+          message: '登录信息过期，请重新登录',
+          type: 'error'
+        })
+        this.$router.push('/')
+      } else {
+        this.recordAccount(userCookie)
+      }
     }
+    this.curActivePage = this.$router.currentRoute.fullPath
   },
   data () {
     return {
       dialogDownloadVisible: false,
       emptyListVisible: false,
+      curActivePage: '',
       tobeDownload: [
         { name: '报表一', group: '收入类' },
         { name: '报表二', group: '收入类' },
