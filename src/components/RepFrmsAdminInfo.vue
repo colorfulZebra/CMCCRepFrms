@@ -98,7 +98,7 @@ export default {
       this.recordAccount(userCookie)
     }
     if (this.owner.length) {
-      repfrms.getFrms(this.getLoginAccount()).then((response) => {
+      repfrms.getFrms(this.owner).then((response) => {
         this.groups = response.data.groups
         this.loading = false
       }).catch(() => {
@@ -131,15 +131,40 @@ export default {
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
     ...mapActions('account', ['recordAccount']),
+    refreshData () {
+      if (this.owner.length) {
+        repfrms.getFrms(this.owner).then((response) => {
+          this.groups = response.data.groups
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: '获取服务器用户数据错误'
+          })
+        })
+      } else {
+        this.$message({
+          message: '登录信息过期，请重新登录',
+          type: 'error'
+        })
+        this.$router.push('/')
+      }
+    },
     newTableSet () {
+      this.newgroupVisible = false
       let exsitedNames = this.groups.map(gp => gp.groupname)
+      this.loading = true
       repfrms.newTableSet(this.owner, this.newGroupname, exsitedNames).then((reponse) => {
         this.$message({
           type: 'success',
           message: '成功新建表集合'
         })
-        this.$router.go()
+        // this.$router.go()
+        this.refreshData()
+        this.newGroupname = ''
+        this.loading = false
       }).catch((err) => {
+        this.newGroupname = ''
+        this.loading = false
         this.$message({
           type: 'error',
           message: err.message
@@ -164,6 +189,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.loading = true
         repfrms.deleteTableSet(this.owner, name).then((response) => {
           if (!response.data.result) {
             this.$message({
@@ -171,14 +197,18 @@ export default {
               message: response.data.data
             })
           } else {
-            this.$router.go()
+            this.refreshData()
+            // this.$router.go()
           }
+          this.loading = false
         }).catch((err) => {
+          this.loading = false
           this.$message({
             type: 'error',
             message: err.message
           })
         })
+      }).catch(() => {
       })
     },
     deleteRepFrm () {
