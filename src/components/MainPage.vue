@@ -73,7 +73,17 @@ export default {
         this.recordAccount(userCookie)
       }
     }
-    this.curActivePage = this.$router.currentRoute.fullPath
+    let curFullPath = this.$router.currentRoute.fullPath
+    if (curFullPath.indexOf('repadmin') !== -1) {
+      this.$router.push('/main/repadmin')
+      this.curActivePage = '/main/repadmin'
+    } else if (curFullPath.indexOf('main') !== -1) {
+      this.$router.push('/main')
+      this.curActivePage = '/main'
+    } else {
+      this.$router.push('/')
+    }
+    // this.curActivePage = this.$router.currentRoute.fullPath
   },
   data () {
     return {

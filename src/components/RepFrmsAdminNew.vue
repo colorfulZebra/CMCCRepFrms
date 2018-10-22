@@ -51,7 +51,7 @@
       <el-row>
         <el-col :span="24" v-show="newcolumns.length === 0">(空)</el-col>
         <el-col :span="24" v-show="newcolumns.length > 0">
-          <el-tag v-for="(nc, idx) in newcolumns" :key="nc" :type="tagColors[idx % 4]" closable @close="deleteNewColumn(idx)">{{ nc }}</el-tag>
+          <el-tag v-for="(nc, idx) in showcolumns" :key="nc" :type="tagColors[idx % 4]" closable @close="deleteNewColumn(idx)">{{ nc }}</el-tag>
         </el-col>
       </el-row>
     </div>
@@ -67,83 +67,40 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { faArrowLeft, faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
+import tabledef from '../api/tabledef'
 
 export default {
   data () {
     return {
       active: 0,
       tagColors: ['', 'success', 'info', 'warning'],
+      monthTags: [],
       repfrmname: '',
+      headOptions: [],
       newhead: [],
-      headOptions: [
-        {
-          value: '地市',
-          label: '地市',
-          children: [
-            { value: '西安@铜川@咸阳@宝鸡@渭南@汉中@安康@商洛@榆林@延安', label: '全部' },
-            { value: '西安', label: '西安' },
-            { value: '铜川', label: '铜川' },
-            { value: '咸阳', label: '咸阳' },
-            { value: '宝鸡', label: '宝鸡' },
-            { value: '渭南', label: '渭南' },
-            { value: '汉中', label: '汉中' },
-            { value: '安康', label: '安康' },
-            { value: '商洛', label: '商洛' },
-            { value: '榆林', label: '榆林' },
-            { value: '延安', label: '延安' }
-          ]
-        }
-      ],
       newheads: [],
       newcolumn: [],
-      columnOptions: [
-        {
-          value: '业务',
-          label: '业务',
-          children: [
-            {
-              value: '流量',
-              label: '流量',
-              children: [
-                {
-                  value: '同比增幅',
-                  label: '同比增幅',
-                  children: [
-                    { value: '2018年1月@2018年2月@2018年3月@2018年4月@2018年5月@2018年6月@2018年7月', label: '2018年' },
-                    { value: '2018年1月', label: '2018年1月' },
-                    { value: '2018年2月', label: '2018年2月' },
-                    { value: '2018年3月', label: '2018年3月' },
-                    { value: '2018年4月', label: '2018年4月' },
-                    { value: '2018年5月', label: '2018年5月' },
-                    { value: '2018年6月', label: '2018年6月' },
-                    { value: '2018年7月', label: '2018年7月' }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          value: '收入',
-          label: '收入',
-          children: [
-            {
-              value: '流量收入',
-              label: '流量收入',
-              children: [
-                { value: '当月完成', label: '当月完成' },
-                { value: '当月同比', label: '当月同比' },
-                { value: '本年累计', label: '本年累计' },
-                { value: '累计同比', label: '累计同比' }
-              ]
-            }
-          ]
-        }
-      ],
       newcolumns: [],
+      showcolumns: [],
+      columnOptions: [],
       templateTable: []
     }
+  },
+  mounted () {
+    let tmpMonth = `${moment().format('YYYY')}01`
+    let curMonth = moment().format('YYYYMM')
+    while (tmpMonth !== curMonth) {
+      this.monthTags.push(tmpMonth)
+      tmpMonth = moment(tmpMonth, 'YYYYMM').add(1, 'month').format('YYYYMM')
+    }
+    tabledef.getRowTypes().then((data) => {
+      this.headOptions = data
+    })
+    tabledef.getColumns().then((data) => {
+      this.columnOptions = data
+    })
   },
   computed: {
     prevIcon () {
@@ -169,7 +126,6 @@ export default {
     next () {
       if (this.active === 1) {
         this._genReportTemplate()
-        console.log(this.templateTable)
       }
       if (this.active++ > 2) this.active = 0
     },
@@ -183,24 +139,41 @@ export default {
     },
     addNewHead () {
       let items = this.newhead[this.newhead.length - 1].split('@')
-      this.newheads.push(...items)
+      items.map(el => {
+        if (!this.newheads.includes(el)) {
+          this.newheads.push(el)
+        }
+      })
       this.newhead = []
     },
     deleteNewHead (idx) {
       this.newheads.splice(idx, 1)
     },
     addNewColumn () {
-      let lastitems = this.newcolumn[this.newcolumn.length - 1].split('@')
-      let items = lastitems.map(li => {
-        let tmp = this.newcolumn.slice(0, this.newcolumn.length - 1)
-        tmp.unshift(li)
-        return tmp.join('')
-      })
-      this.newcolumns.push(...items)
+      this.newcolumns.push(this.newcolumn[this.newcolumn.length - 1])
       this.newcolumn = []
+      this.showcolumns = []
+      this.monthTags.map(mel => {
+        this.newcolumns.map(cel => {
+          this.showcolumns.push(`${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`)
+        })
+      })
     },
     deleteNewColumn (idx) {
-      this.newcolumns.splice(idx, 1)
+      let delidx = -1
+      for (let ridx = 0; ridx < this.newcolumns.length; ridx++) {
+        if (this.showcolumns[idx].includes(this.newcolumns[ridx])) {
+          delidx = ridx
+          break
+        }
+      }
+      this.newcolumns.splice(delidx, 1)
+      this.showcolumns = []
+      this.monthTags.map(mel => {
+        this.newcolumns.map(cel => {
+          this.showcolumns.push(`${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`)
+        })
+      })
     },
     _genReportTemplate () {
       this.templateTable = []
