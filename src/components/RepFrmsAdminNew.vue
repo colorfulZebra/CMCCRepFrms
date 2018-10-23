@@ -51,7 +51,7 @@
       <el-row>
         <el-col :span="24" v-show="newcolumns.length === 0">(空)</el-col>
         <el-col :span="24" v-show="newcolumns.length > 0">
-          <el-tag v-for="(nc, idx) in showcolumns" :key="nc" :type="tagColors[idx % 4]" closable @close="deleteNewColumn(idx)">{{ nc }}</el-tag>
+          <el-tag v-for="(nc, idx) in newcolumns" :key="nc.label" :type="tagColors[idx % 4]" closable @close="deleteNewColumn(idx)">{{ nc.label }}</el-tag>
         </el-col>
       </el-row>
     </div>
@@ -60,7 +60,7 @@
       <h3>{{ repfrmname }}</h3>
       <el-table :data="templateTable" border>
         <el-table-column prop="head" label="地市"></el-table-column>
-        <el-table-column v-for="(c, idx) in newcolumns" :key="c" :prop="`col${idx}`" :label="c"></el-table-column>
+        <el-table-column v-for="(c, idx) in newcolumns" :key="c.label" :prop="`col${idx}`" :label="c.label"></el-table-column>
       </el-table>
     </div>
   </div>
@@ -68,12 +68,15 @@
 
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import { faArrowLeft, faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
 import tabledef from '../api/tabledef'
+import repfrm from '../api/reportforms'
 
 export default {
   data () {
     return {
+      owner: '',
       active: 0,
       tagColors: ['', 'success', 'info', 'warning'],
       monthTags: [],
@@ -83,12 +86,14 @@ export default {
       newheads: [],
       newcolumn: [],
       newcolumns: [],
-      showcolumns: [],
+      columntypes: [],
       columnOptions: [],
       templateTable: []
     }
   },
+  props: ['tableset'],
   mounted () {
+    this.owner = this.getLoginAccount()
     let tmpMonth = `${moment().format('YYYY')}01`
     let curMonth = moment().format('YYYYMM')
     while (tmpMonth !== curMonth) {
@@ -119,15 +124,40 @@ export default {
       return this.newhead.length === 0 || this.newheads.includes(this.newhead[this.newhead.length - 1])
     },
     checkNewColumn () {
-      return this.newcolumn.length === 0 || this.newcolumns.includes(this.newcolumn.slice(this.newcolumn.length - 1).concat(this.newcolumn.slice(0, this.newcolumn.length - 1)).join(''))
+      return this.newcolumn.length === 0 || this.columntypes.includes(this.newcolumn[this.newcolumn.length - 1])
     }
   },
   methods: {
+    ...mapGetters('account', ['getLoginAccount']),
     next () {
       if (this.active === 1) {
         this._genReportTemplate()
+        this.active++
+      } else if (this.active === 2) {
+        repfrm.newTable(this.owner, this.tableset, {
+          name: this.repfrmname, rows: this.newheads, columns: this.newcolumns
+        }).then((resp) => {
+          if (resp.data.result) {
+            this.$message({
+              type: 'success',
+              message: '新建表成功'
+            })
+            this.$router.push('/main/repadmin')
+          } else {
+            this.$message({
+              type: 'error',
+              message: resp.data.data
+            })
+          }
+        }).catch((err) => {
+          this.$message({
+            type: 'error',
+            message: err.message
+          })
+        })
+      } else {
+        this.active++
       }
-      if (this.active++ > 2) this.active = 0
     },
     prev () {
       if (--this.active < 0) this.active = 0
@@ -150,28 +180,36 @@ export default {
       this.newheads.splice(idx, 1)
     },
     addNewColumn () {
-      this.newcolumns.push(this.newcolumn[this.newcolumn.length - 1])
+      this.columntypes.push(this.newcolumn[this.newcolumn.length - 1])
       this.newcolumn = []
-      this.showcolumns = []
+      this.newcolumns = []
       this.monthTags.map(mel => {
-        this.newcolumns.map(cel => {
-          this.showcolumns.push(`${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`)
+        this.columntypes.map(cel => {
+          this.newcolumns.push({
+            label: `${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`,
+            month: mel,
+            name: cel
+          })
         })
       })
     },
     deleteNewColumn (idx) {
       let delidx = -1
-      for (let ridx = 0; ridx < this.newcolumns.length; ridx++) {
-        if (this.showcolumns[idx].includes(this.newcolumns[ridx])) {
+      for (let ridx = 0; ridx < this.columntypes.length; ridx++) {
+        if (this.newcolumns[idx].label.includes(this.columntypes[ridx])) {
           delidx = ridx
           break
         }
       }
-      this.newcolumns.splice(delidx, 1)
-      this.showcolumns = []
+      this.columntypes.splice(delidx, 1)
+      this.newcolumns = []
       this.monthTags.map(mel => {
-        this.newcolumns.map(cel => {
-          this.showcolumns.push(`${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`)
+        this.columntypes.map(cel => {
+          this.newcolumns.push({
+            label: `${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`,
+            month: mel,
+            name: cel
+          })
         })
       })
     },

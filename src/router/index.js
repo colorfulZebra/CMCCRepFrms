@@ -34,8 +34,9 @@ export default new Router({
               component: RepFrmsAdminInfo
             },
             {
-              path: 'new',
-              component: RepFrmsAdminNew
+              path: 'new/:tableset',
+              component: RepFrmsAdminNew,
+              props: true
             }
           ]
         }

@@ -13,7 +13,7 @@
     <div v-for="gp in groups" :key="gp.id" class="group-item">
       <h3>
         {{ gp.groupname }}
-        <el-button icon="el-icon-plus" type="primary" style="font-size: 10px; padding: 5px;" @click="newRepFrm()" plain>
+        <el-button icon="el-icon-plus" type="primary" style="font-size: 10px; padding: 5px;" @click="newRepFrm(gp.groupname)" plain>
         </el-button>
         <el-button icon="el-icon-close" type="danger" style="font-size: 10px; padding: 5px; margin-left: 0;" @click="deleteTableSet(gp.groupname)" plain>
         </el-button>
@@ -158,7 +158,6 @@ export default {
           type: 'success',
           message: '成功新建表集合'
         })
-        // this.$router.go()
         this.refreshData()
         this.newGroupname = ''
         this.loading = false
@@ -171,8 +170,8 @@ export default {
         })
       })
     },
-    newRepFrm () {
-      this.$router.push('/main/repadmin/new')
+    newRepFrm (groupname) {
+      this.$router.push(`/main/repadmin/new/${groupname}`)
     },
     saveHide (gpid, frmid) {
       this.cancelHide(gpid, frmid)
