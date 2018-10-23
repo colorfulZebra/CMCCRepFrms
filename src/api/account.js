@@ -23,5 +23,41 @@ export default {
         })
       }
     })
+  },
+
+  checkPwd (account, password) {
+    return new Promise((resolve, reject) => {
+      if (!account.length || !password.length) {
+        reject(new Error('账户密码错误'))
+      } else {
+        axios.post(restUser.login, { name: account, password }).then((resp) => {
+          if (!resp.data.result) {
+            reject(new Error('账户密码错误'))
+          } else {
+            resolve(resp.data.result)
+          }
+        }).catch(() => {
+          reject(new Error('服务器问题，无法验证密码'))
+        })
+      }
+    })
+  },
+
+  changePwd (account, newpwd, repeatpwd) {
+    return new Promise((resolve, reject) => {
+      if (account && account.length &&
+          newpwd && newpwd.length &&
+          repeatpwd && repeatpwd.length) {
+        if (newpwd !== repeatpwd) {
+          reject(new Error('新密码和重复密码不一致'))
+        } else if (!/^\w{6}$/.test(newpwd)) {
+          reject(new Error('新密码长度必须大于等于6位，包含数字和字母'))
+        } else {
+          resolve('OK')
+        }
+      } else {
+        reject(new Error('新密码和重复密码不能为空'))
+      }
+    })
   }
 }

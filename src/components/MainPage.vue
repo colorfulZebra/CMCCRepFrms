@@ -52,12 +52,33 @@
         <el-button @click="emptyListVisible=false;dialogDownloadVisible=false">关闭</el-button>
       </span>
     </el-dialog>
+    <el-dialog :visible.sync="dialogChangePwd" width="30%" :close-on-click-modal="false">
+      <span slot="title" class="dialog-title">修改密码</span>
+      <div style="margin: 10px"></div>
+      <el-form label-position="right" label-width="20%" :model="dlgChangePwd">
+        <el-form-item label="旧密码">
+          <el-input v-model="dlgChangePwd.oldpwd"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码">
+          <el-input v-model="dlgChangePwd.newpwd"></el-input>
+        </el-form-item>
+        <el-form-item label="重复密码">
+          <el-input v-model="dlgChangePwd.repeatpwd"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <span style="float:left; color:red; text-align:left; width:60%">{{ dlgChangePwdMsg }}</span>
+        <el-button type="primary" @click="changePWD()">确定</el-button>
+        <el-button @click="dialogChangePwd = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { faUser, faDatabase, faEdit, faBox, faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { mapGetters, mapActions } from 'vuex'
+import account from '../api/account'
 
 export default {
   mounted () {
@@ -73,6 +94,7 @@ export default {
         this.recordAccount(userCookie)
       }
     }
+    this.account = this.getLoginAccount()
     let curFullPath = this.$router.currentRoute.fullPath
     if (curFullPath.indexOf('repadmin') !== -1) {
       this.$router.push('/main/repadmin')
@@ -83,11 +105,18 @@ export default {
     } else {
       this.$router.push('/')
     }
-    // this.curActivePage = this.$router.currentRoute.fullPath
   },
   data () {
     return {
+      account: '',
       dialogDownloadVisible: false,
+      dialogChangePwd: false,
+      dlgChangePwdMsg: '',
+      dlgChangePwd: {
+        oldpwd: '',
+        newpwd: '',
+        repeatpwd: ''
+      },
       emptyListVisible: false,
       curActivePage: '',
       tobeDownload: [
@@ -129,7 +158,11 @@ export default {
       if (command === 'quit') {
         this._logout()
       } else if (command === 'changepwd') {
-        this._changepwd()
+        this.dlgChangePwdMsg = ''
+        this.dlgChangePwd.oldpwd = ''
+        this.dlgChangePwd.newpwd = ''
+        this.dlgChangePwd.repeatpwd = ''
+        this.dialogChangePwd = true
       } else {}
     },
     _logout () {
@@ -141,7 +174,16 @@ export default {
         this.$router.push('/')
       }).catch(() => {})
     },
-    _changepwd () {}
+    changePWD () {
+      account.checkPwd(this.account, this.dlgChangePwd.oldpwd)
+        .then(() => {
+          return account.changePwd(this.account, this.dlgChangePwd.newpwd, this.dlgChangePwd.repeatpwd)
+        }).then(() => {
+          this.dialogChangePwd = false
+        }).catch((err) => {
+          this.dlgChangePwdMsg = err.message
+        })
+    }
   }
 }
 </script>
