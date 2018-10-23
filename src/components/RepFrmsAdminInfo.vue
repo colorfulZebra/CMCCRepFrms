@@ -30,7 +30,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item><el-button type="text">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
-                  <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm()">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
+                  <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm(gp.groupname, frm.frmname)">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item divided>权限管理</el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工A</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工B</el-checkbox></el-dropdown-item>
@@ -197,7 +197,6 @@ export default {
             })
           } else {
             this.refreshData()
-            // this.$router.go()
           }
           this.loading = false
         }).catch((err) => {
@@ -210,12 +209,36 @@ export default {
       }).catch(() => {
       })
     },
-    deleteRepFrm () {
+    deleteRepFrm (groupname, tablename) {
       this.$confirm('此操作将删除报表，继续？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {})
+      }).then(() => {
+        this.loading = true
+        repfrms.deleteTable(this.owner, groupname, tablename).then((resp) => {
+          this.loading = false
+          if (resp.data.result) {
+            this.$message({
+              type: 'success',
+              message: '删除表成功'
+            })
+            this.refreshData()
+          } else {
+            this.$message({
+              type: 'error',
+              message: resp.data.data
+            })
+          }
+        }).catch((err) => {
+          this.loading = false
+          this.$message({
+            type: 'error',
+            message: err.message
+          })
+        })
+      }).catch(() => {
+      })
     },
     deleteHead () {
       this.$confirm('此操作将删除报表表头，继续？', '提示', {

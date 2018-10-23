@@ -109,5 +109,21 @@ export default {
         reject(new Error('创建表信息非法'))
       }
     })
+  },
+
+  deleteTable (owner, setname, tablename) {
+    return new Promise((resolve, reject) => {
+      if (owner && owner.length !== 0 &&
+          setname && setname.length !== 0 &&
+          tablename && tablename.length !== 0) {
+        axios.delete(restRepfrm.deleteTable, { data: { owner, name: setname, table: tablename } }).then((resp) => {
+          resolve(resp)
+        }).catch((err) => {
+          reject(new Error(err))
+        })
+      } else {
+        reject(new Error('删除表信息非法'))
+      }
+    })
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div id="repfrmnew">
+  <div id="repfrmnew" v-loading="loading">
     <el-steps :active="active" finish-status="success">
       <el-step title="1,定义报表表头"></el-step>
       <el-step title="2,定义报表列"></el-step>
@@ -78,6 +78,7 @@ export default {
     return {
       owner: '',
       active: 0,
+      loading: false,
       tagColors: ['', 'success', 'info', 'warning'],
       monthTags: [],
       repfrmname: '',
@@ -134,9 +135,11 @@ export default {
         this._genReportTemplate()
         this.active++
       } else if (this.active === 2) {
+        this.loading = true
         repfrm.newTable(this.owner, this.tableset, {
           name: this.repfrmname, rows: this.newheads, columns: this.newcolumns
         }).then((resp) => {
+          this.loading = false
           if (resp.data.result) {
             this.$message({
               type: 'success',
@@ -150,6 +153,7 @@ export default {
             })
           }
         }).catch((err) => {
+          this.loading = false
           this.$message({
             type: 'error',
             message: err.message
