@@ -25,7 +25,7 @@ export default {
                 }
               })
               if (!haveFlag) {
-                rowTypeArr.push({label: el.type, value: el.type, children: []})
+                rowTypeArr.push({label: el.type, value: el.type, children: [{ value: el.name, label: el.name }]})
               }
             })
             rowTypeArr.map(rel => {

@@ -31,26 +31,23 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item><el-button type="text">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm(gp.groupname, frm.frmname)">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
+                  <!--
                   <el-dropdown-item divided>权限管理</el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工A</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工B</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工C</el-checkbox></el-dropdown-item>
                   <el-dropdown-item><el-checkbox>员工D</el-checkbox></el-dropdown-item>
                   <el-button type="text" @click="saveHide(gp.id, frm.id)">确定</el-button><el-button type="text" @click="cancelHide(gp.id, frm.id)">取消</el-button>
+                  -->
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
             <h5>表头<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
             <draggable v-model="exampleHead" @end="onEnd">
-              <el-tag v-for="head in exampleHead" :key="head.label" :type="head.type" closable @close="deleteHead()">{{ head.label }}</el-tag>
+              <el-tag v-for="(head, idx) in frm.rows" :key="head" :type="tagColors[idx % 4]" closable @close="deleteHead()">{{ head }}</el-tag>
             </draggable>
             <h5>列<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
-            <el-tag @close="deleteColumn()" closable>2018年1月流量同比增幅</el-tag>
-            <el-tag @close="deleteColumn()" type="success" closable>2018年2月流量同比增幅</el-tag>
-            <el-tag @close="deleteColumn()" type="info" closable>2018年3月流量同比增幅</el-tag>
-            <el-tag @close="deleteColumn()" type="warning" closable>2018年4月流量同比增幅</el-tag>
-            <el-tag @close="deleteColumn()" closable>2018年5月流量同比增幅</el-tag>
-            <el-tag @close="deleteColumn()" type="success" closable>2018年6月流量同比增幅</el-tag>
+            <el-tag v-for="(col, idx) in frm.columns" :key="col.label" :type="tagColors[idx % 4]" closable @close="deleteColumn()">{{ col.label }}</el-tag>
           </el-card>
         </el-col>
       </el-row>
@@ -74,6 +71,7 @@ export default {
       owner: '',
       loading: false,
       newgroupVisible: false,
+      tagColors: ['', 'success', 'info', 'warning'],
       exampleHead: [
         { type: '', label: '西安' },
         { type: 'success', label: '铜川' },

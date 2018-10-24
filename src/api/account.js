@@ -1,7 +1,8 @@
 const axios = require('axios')
 const baseUrlUser = 'http://localhost:9000/api/user'
 const restUser = {
-  login: `${baseUrlUser}/login`
+  login: `${baseUrlUser}/login`,
+  changepwd: `${baseUrlUser}/change`
 }
 
 export default {
@@ -43,17 +44,26 @@ export default {
     })
   },
 
-  changePwd (account, newpwd, repeatpwd) {
+  changePwd (account, oldpwd, newpwd, repeatpwd) {
     return new Promise((resolve, reject) => {
       if (account && account.length &&
+          oldpwd && oldpwd.length &&
           newpwd && newpwd.length &&
           repeatpwd && repeatpwd.length) {
         if (newpwd !== repeatpwd) {
           reject(new Error('新密码和重复密码不一致'))
-        } else if (!/^\w{6}$/.test(newpwd)) {
+        } else if (!/^\w{6,}$/.test(newpwd)) {
           reject(new Error('新密码长度必须大于等于6位，包含数字和字母'))
         } else {
-          resolve('OK')
+          axios.post(restUser.changepwd, { name: account, password: oldpwd, newpassword: newpwd }).then((resp) => {
+            if (resp.data.result) {
+              resolve(resp)
+            } else {
+              reject(new Error(resp.data.data))
+            }
+          }).catch((err) => {
+            reject(new Error(err))
+          })
         }
       } else {
         reject(new Error('新密码和重复密码不能为空'))

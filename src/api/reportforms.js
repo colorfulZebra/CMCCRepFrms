@@ -41,10 +41,12 @@ export default {
               groupname: el.name,
               frms: []
             }
-            for (let tabel of el.tables) {
+            for (let table of el.tables) {
               let tmptable = {
                 id: tableid.toString(),
-                frmname: tabel.name
+                frmname: table.name,
+                rows: table.rows,
+                columns: table.columns
               }
               tmpset.frms.push(tmptable)
               tableid += 1

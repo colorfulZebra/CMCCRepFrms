@@ -52,7 +52,7 @@
         <el-button @click="emptyListVisible=false;dialogDownloadVisible=false">关闭</el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="dialogChangePwd" width="30%" :close-on-click-modal="false">
+    <el-dialog :visible.sync="dialogChangePwd" width="35%" :close-on-click-modal="false">
       <span slot="title" class="dialog-title">修改密码</span>
       <div style="margin: 10px"></div>
       <el-form label-position="right" label-width="20%" :model="dlgChangePwd">
@@ -177,7 +177,7 @@ export default {
     changePWD () {
       account.checkPwd(this.account, this.dlgChangePwd.oldpwd)
         .then(() => {
-          return account.changePwd(this.account, this.dlgChangePwd.newpwd, this.dlgChangePwd.repeatpwd)
+          return account.changePwd(this.account, this.dlgChangePwd.oldpwd, this.dlgChangePwd.newpwd, this.dlgChangePwd.repeatpwd)
         }).then(() => {
           this.dialogChangePwd = false
         }).catch((err) => {

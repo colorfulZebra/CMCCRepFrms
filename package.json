@@ -19,6 +19,7 @@
     "moment": "^2.22.2",
     "sortablejs": "^1.7.0",
     "vue": "^2.5.2",
+    "vue-cookie": "^1.1.4",
     "vue-draggable": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuedraggable": "^2.16.0",

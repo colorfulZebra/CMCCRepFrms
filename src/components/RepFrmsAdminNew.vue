@@ -59,7 +59,7 @@
       <br>
       <h3>{{ repfrmname }}</h3>
       <el-table :data="templateTable" border>
-        <el-table-column prop="head" label="地市"></el-table-column>
+        <el-table-column prop="head" :label="newheadtype"></el-table-column>
         <el-table-column v-for="(c, idx) in newcolumns" :key="c.label" :prop="`col${idx}`" :label="c.label"></el-table-column>
       </el-table>
     </div>
@@ -83,6 +83,7 @@ export default {
       monthTags: [],
       repfrmname: '',
       headOptions: [],
+      newheadtype: '',
       newhead: [],
       newheads: [],
       newcolumn: [],
@@ -122,7 +123,7 @@ export default {
       return this.active >= 2 ? { text: '完成', type: 'success' } : { text: '下一步', type: 'primary' }
     },
     checkNewHead () {
-      return this.newhead.length === 0 || this.newheads.includes(this.newhead[this.newhead.length - 1])
+      return this.newhead.length === 0 || this.newheads.includes(this.newhead[this.newhead.length - 1]) || (this.newheadtype.length > 0 && this.newhead[0] !== this.newheadtype)
     },
     checkNewColumn () {
       return this.newcolumn.length === 0 || this.columntypes.includes(this.newcolumn[this.newcolumn.length - 1])
@@ -172,6 +173,7 @@ export default {
     newHeadChanged (value) {
     },
     addNewHead () {
+      this.newheadtype = this.newhead[0]
       let items = this.newhead[this.newhead.length - 1].split('@')
       items.map(el => {
         if (!this.newheads.includes(el)) {
@@ -182,6 +184,7 @@ export default {
     },
     deleteNewHead (idx) {
       this.newheads.splice(idx, 1)
+      if (this.newheads.length === 0) this.newheadtype = ''
     },
     addNewColumn () {
       this.columntypes.push(this.newcolumn[this.newcolumn.length - 1])
