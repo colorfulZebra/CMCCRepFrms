@@ -29,7 +29,7 @@
                   设置<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item><el-button type="text">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button type="text" @click="copyTheRepfrm(gp.groupname, frm)">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm(gp.groupname, frm.frmname)">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
                   <!--
                   <el-dropdown-item divided>权限管理</el-dropdown-item>
@@ -51,6 +51,20 @@
           </el-card>
         </el-col>
       </el-row>
+      <el-dialog :visible.sync="dialogCopyRepfrm" width="30%" :close-on-click-modal="false">
+        <span slot="title" class="dialog-title">复制表</span>
+        <div style="margin: 5px">
+          <el-form label-position="right" label-width="20%" :model="copyInfo">
+            <el-form-item label="新表名">
+              <el-input v-model="copyInfo.name"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="confirmCopyRepfrm()" :disabled="copyInfo.name.length === 0">确定</el-button>
+          <el-button @click="dialogCopyRepfrm = false">取消</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -71,6 +85,12 @@ export default {
       owner: '',
       loading: false,
       newgroupVisible: false,
+      dialogCopyRepfrm: false,
+      copyInfo: {
+        name: '',
+        setname: '',
+        tabledef: {}
+      },
       tagColors: ['', 'success', 'info', 'warning'],
       exampleHead: [
         { type: '', label: '西安' },
@@ -206,6 +226,40 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    copyTheRepfrm (groupname, tabledef) {
+      this.copyInfo.name = ''
+      this.copyInfo.setname = groupname
+      this.copyInfo.tabledef = tabledef
+      this.dialogCopyRepfrm = true
+    },
+    confirmCopyRepfrm () {
+      this.loading = true
+      repfrms.newTable(this.owner, this.copyInfo.setname, {
+        name: this.copyInfo.name,
+        rows: this.copyInfo.tabledef.rows,
+        columns: this.copyInfo.tabledef.columns }).then((resp) => {
+        if (resp.data.result) {
+          this.$message({
+            type: 'success',
+            message: '复制表成功'
+          })
+          this.refreshData()
+        } else {
+          this.$message({
+            type: 'error',
+            message: resp.data.data
+          })
+        }
+        this.loading = false
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
+        this.loading = false
+      })
+      this.dialogCopyRepfrm = false
     },
     deleteRepFrm (groupname, tablename) {
       this.$confirm('此操作将删除报表，继续？', '提示', {

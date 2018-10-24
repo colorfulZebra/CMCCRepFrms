@@ -61,7 +61,7 @@ export default {
                 }
               })
               if (!flag) {
-                colTypeArr.push({ label: el.type, value: el.type, children: [] })
+                colTypeArr.push({ label: el.type, value: el.type, children: [ { value: el.name, label: el.name } ] })
               }
             })
             resolve(colTypeArr)
