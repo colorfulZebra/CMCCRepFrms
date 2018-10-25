@@ -126,7 +126,11 @@ export default {
       return this.newhead.length === 0 || this.newheads.includes(this.newhead[this.newhead.length - 1]) || (this.newheadtype.length > 0 && this.newhead[0] !== this.newheadtype)
     },
     checkNewColumn () {
-      return this.newcolumn.length === 0 || this.columntypes.includes(this.newcolumn[this.newcolumn.length - 1])
+      let flag = false
+      this.columntypes.map(cel => {
+        if (cel.ctype === this.newcolumn[0] && cel.name === this.newcolumn[this.newcolumn.length - 1]) flag = true
+      })
+      return this.newcolumn.length === 0 || flag
     }
   },
   methods: {
@@ -187,15 +191,16 @@ export default {
       if (this.newheads.length === 0) this.newheadtype = ''
     },
     addNewColumn () {
-      this.columntypes.push(this.newcolumn[this.newcolumn.length - 1])
+      this.columntypes.push({ ctype: this.newcolumn[0], name: this.newcolumn[this.newcolumn.length - 1] })
       this.newcolumn = []
       this.newcolumns = []
       this.monthTags.map(mel => {
         this.columntypes.map(cel => {
           this.newcolumns.push({
-            label: `${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`,
+            label: `${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel.name}`,
             month: mel,
-            name: cel
+            name: cel.name,
+            ctype: cel.ctype
           })
         })
       })
@@ -203,7 +208,8 @@ export default {
     deleteNewColumn (idx) {
       let delidx = -1
       for (let ridx = 0; ridx < this.columntypes.length; ridx++) {
-        if (this.newcolumns[idx].label.includes(this.columntypes[ridx])) {
+        if (this.newcolumns[idx].name === this.columntypes[ridx].name &&
+            this.newcolumns[idx].ctype === this.columntypes[ridx].ctype) {
           delidx = ridx
           break
         }
@@ -213,9 +219,10 @@ export default {
       this.monthTags.map(mel => {
         this.columntypes.map(cel => {
           this.newcolumns.push({
-            label: `${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel}`,
+            label: `${moment(mel, 'YYYYMM').format('YYYY年MM月')}${cel.name}`,
             month: mel,
-            name: cel
+            name: cel.name,
+            ctype: cel.ctype
           })
         })
       })

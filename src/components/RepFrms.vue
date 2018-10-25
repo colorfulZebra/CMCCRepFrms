@@ -27,6 +27,7 @@
         <el-table v-show="curfrmdef.columns!==undefined" :data="curfrmdef.data" max-height="600">
           <el-table-column v-for="(col,idx) in curfrmdef.columns" :key="col.name" :prop="'col'+idx" :label="col.name" :fixed="idx===0"></el-table-column>
         </el-table>
+        <!--
         <el-dropdown v-show="curfrmdef.columns!==undefined">
           <span class="el-dropdown-link">
             选择帐期<i class="el-icon-arrow-down el-icon--right"></i>
@@ -40,6 +41,7 @@
             <el-dropdown-item>2018年6月</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        -->
         <el-button-group v-show="curfrmdef.columns!==undefined && curfrmdef.data.length>0" class="table-options">
           <el-tooltip content="下载此报表" placement="bottom-end">
             <el-button type="primary" size="small" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
