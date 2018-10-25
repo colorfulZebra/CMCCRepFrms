@@ -44,7 +44,7 @@
         -->
         <el-button-group v-show="curfrmdef.columns!==undefined && curfrmdef.data.length>0" class="table-options">
           <el-tooltip content="下载此报表" placement="bottom-end">
-            <el-button type="primary" size="small" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
+            <el-button type="primary" size="small" @click="downloadFrm()" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
           </el-tooltip>
           <el-tooltip content="将报表加入待下载报表集合" placement="bottom-end">
             <el-button type="success" size="small" plain><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import repfrm from '../api/reportforms'
 import { mapGetters, mapActions } from 'vuex'
 import { faFolderOpen, faThList, faFile, faDownload, faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -119,6 +120,8 @@ export default {
       })
       this.frmdefLoading = true
       repfrm.getTableContent(this.owner, groupname, frmname).then((resp) => {
+        resp.groupname = groupname
+        resp.frmname = frmname
         this.curfrmdef = resp
         this.frmdefLoading = false
       }).catch((err) => {
@@ -128,6 +131,29 @@ export default {
           message: err.message
         })
         this.frmdefLoading = false
+      })
+    },
+    downloadFrm () {
+      repfrm.downloadTable(this.owner, this.curfrmdef.groupname, this.curfrmdef.frmname).then((resp) => {
+        // window.location.href = `http://localhost:9000/${resp}`
+        axios({
+          url: `http://localhost:9000/download/${resp}`,
+          method: 'GET',
+          responseType: 'blob'
+        }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', resp)
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        })
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
       })
     }
   },
