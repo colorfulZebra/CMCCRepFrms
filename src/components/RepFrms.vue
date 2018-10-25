@@ -47,7 +47,7 @@
             <el-button type="primary" size="small" @click="downloadFrm()" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
           </el-tooltip>
           <el-tooltip content="将报表加入待下载报表集合" placement="bottom-end">
-            <el-button type="success" size="small" plain><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
+            <el-button type="success" size="small" @click="addToDownload({ setname: curfrmdef.groupname, name: curfrmdef.frmname })" plain><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
           </el-tooltip>
         </el-button-group>
       </el-main>
@@ -103,6 +103,7 @@ export default {
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
     ...mapActions('account', ['recordAccount']),
+    ...mapActions('downloadlist', ['addToDownload']),
     selectFrm (key) {
       let groupid = key.split('-')[0]
       let groupname = ''

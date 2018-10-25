@@ -31,10 +31,10 @@
       <span class="dialog-body">
         <el-table stripe style="width:100%" :data="tobeDownload" max-height="370">
           <el-table-column label="报表名" prop="name"></el-table-column>
-          <el-table-column label="报表分类" prop="group"></el-table-column>
+          <el-table-column label="报表分类" prop="setname"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="text" style="color: Salmon;">删除</el-button>
+              <el-button type="text" style="color: Salmon;" @click="removeDownloadItem(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -44,7 +44,7 @@
           <p>确定要清空列表？</p>
           <div style="text-align: right; margin: 0;">
             <el-button size="mini" type="text" @click="emptyListVisible = false">取消</el-button>
-            <el-button type="danger" size="mini" @click="emptyListVisible = false">确定</el-button>
+            <el-button type="danger" size="mini" @click="dlgEmptyDownloadList()">确定</el-button>
           </div>
           <el-button type="danger" slot="reference">清空&nbsp;<font-awesome-icon :icon="clearDownloadIcon"/></el-button>
         </el-popover>
@@ -95,6 +95,7 @@ export default {
       }
     }
     this.account = this.getLoginAccount()
+    this.tobeDownload = this.getDownloadList()
     let curFullPath = this.$router.currentRoute.fullPath
     if (curFullPath.indexOf('repadmin') !== -1) {
       this.$router.push('/main/repadmin')
@@ -119,16 +120,7 @@ export default {
       },
       emptyListVisible: false,
       curActivePage: '',
-      tobeDownload: [
-        { name: '报表一', group: '收入类' },
-        { name: '报表二', group: '收入类' },
-        { name: '报表三', group: '流量类' },
-        { name: '报表四', group: '流量类' },
-        { name: '报表五', group: '收入类' },
-        { name: '报表六', group: '收入类' },
-        { name: '报表七', group: '客户类' },
-        { name: '报表八', group: '收入类' }
-      ]
+      tobeDownload: []
     }
   },
   computed: {
@@ -154,6 +146,19 @@ export default {
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
     ...mapActions('account', ['recordAccount']),
+    ...mapGetters('downloadlist', ['getDownloadList']),
+    ...mapActions('downloadlist', ['addToDownload']),
+    ...mapActions('downloadlist', ['removeFromDownload']),
+    ...mapActions('downloadlist', ['emptyDownload']),
+    dlgEmptyDownloadList () {
+      this.emptyDownload()
+      this.tobeDownload = this.getDownloadList()
+      this.emptyListVisible = false
+    },
+    removeDownloadItem (item) {
+      this.removeFromDownload(item)
+      this.tobeDownload = this.getDownloadList()
+    },
     handleUserOptions (command) {
       if (command === 'quit') {
         this._logout()

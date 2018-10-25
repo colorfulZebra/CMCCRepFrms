@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import MainPage from '@/components/MainPage'
 import RepFrms from '@/components/RepFrms'
@@ -41,11 +40,6 @@ export default new Router({
           ]
         }
       ]
-    },
-    {
-      path: '/hello',
-      name: 'HelloWorld',
-      component: HelloWorld
     }
   ]
 })
