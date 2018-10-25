@@ -25,7 +25,7 @@
           <font>选择一个报表</font>
         </h1>
         <el-table v-show="curfrmdef.columns!==undefined" :data="curfrmdef.data" max-height="600">
-          <el-table-column v-for="(col,idx) in curfrmdef.columns" :key="col.name" :prop="'col'+idx" :label="col.name" :fixed="idx===0"></el-table-column>
+          <el-table-column v-for="(col,idx) in curfrmdef.columns" :key="col" :prop="'col'+idx" :label="col" :fixed="idx===0"></el-table-column>
         </el-table>
         <!--
         <el-dropdown v-show="curfrmdef.columns!==undefined">
@@ -57,7 +57,6 @@
 
 <script>
 import repfrm from '../api/reportforms'
-import frmdef from '../api/repfrmdefs'
 import { mapGetters, mapActions } from 'vuex'
 import { faFolderOpen, faThList, faFile, faDownload, faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -104,9 +103,30 @@ export default {
     ...mapGetters('account', ['getLoginAccount']),
     ...mapActions('account', ['recordAccount']),
     selectFrm (key) {
+      let groupid = key.split('-')[0]
+      let groupname = ''
+      let frmid = key.split('-')[1]
+      let frmname = ''
+      this.repfrms.map(group => {
+        if (group.id === groupid) {
+          groupname = group.groupname
+          group.frms.map(frm => {
+            if (frm.id === frmid) {
+              frmname = frm.frmname
+            }
+          })
+        }
+      })
       this.frmdefLoading = true
-      frmdef.getFrmDef(key).then((data) => {
-        this.curfrmdef = data
+      repfrm.getTableContent(this.owner, groupname, frmname).then((resp) => {
+        this.curfrmdef = resp
+        this.frmdefLoading = false
+      }).catch((err) => {
+        this.curfrmdef = {}
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
         this.frmdefLoading = false
       })
     }

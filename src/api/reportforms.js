@@ -127,5 +127,33 @@ export default {
         reject(new Error('删除表信息非法'))
       }
     })
+  },
+
+  getTableContent (owner, setname, tablename) {
+    return new Promise((resolve, reject) => {
+      if (typeof owner === 'string' && owner.length !== 0 &&
+          typeof setname === 'string' && setname.length !== 0 &&
+          typeof tablename === 'string' && tablename.length !== 0) {
+        axios.get(restRepfrm.genTable(owner, setname, tablename)).then((resp) => {
+          if (resp.data.result) {
+            let respData = { columns: resp.data.data.data[0], data: [] }
+            for (let idx = 1; idx < resp.data.data.data.length; idx++) {
+              let tmp = {}
+              for (let cidx = 0; cidx < respData.columns.length; cidx++) {
+                tmp[`col${cidx}`] = resp.data.data.data[idx][cidx]
+              }
+              respData.data.push(tmp)
+            }
+            resolve(respData)
+          } else {
+            reject(new Error(resp.data.data))
+          }
+        }).catch((err) => {
+          reject(new Error(err))
+        })
+      } else {
+        reject(new Error('获取表信息参数非法'))
+      }
+    })
   }
 }
