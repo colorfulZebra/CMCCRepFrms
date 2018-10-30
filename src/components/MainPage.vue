@@ -48,7 +48,7 @@
           </div>
           <el-button type="danger" slot="reference">清空&nbsp;<font-awesome-icon :icon="clearDownloadIcon"/></el-button>
         </el-popover>
-        <el-button type="primary">下载&nbsp;<font-awesome-icon :icon="downloadActionIcon"/></el-button>
+        <el-button type="primary" @click="downloadAll()" :disabled="tobeDownload.length===0">下载&nbsp;<font-awesome-icon :icon="downloadActionIcon"/></el-button>
         <el-button @click="emptyListVisible=false;dialogDownloadVisible=false">关闭</el-button>
       </span>
     </el-dialog>
@@ -78,7 +78,9 @@
 <script>
 import { faUser, faDatabase, faEdit, faBox, faDownload, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
 import account from '../api/account'
+import repfrm from '../api/reportforms'
 
 export default {
   mounted () {
@@ -158,6 +160,30 @@ export default {
     removeDownloadItem (item) {
       this.removeFromDownload(item)
       this.tobeDownload = this.getDownloadList()
+    },
+    downloadAll () {
+      let paramTobeDownload = []
+      this.tobeDownload.map(el => paramTobeDownload.push({ set: el.setname, name: el.name }))
+      repfrm.downloadAllTables(this.account, paramTobeDownload).then((file) => {
+        axios({
+          url: `http://localhost:9000/download/${file}`,
+          method: 'GET',
+          responseType: 'blob'
+        }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', file)
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        })
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
+      })
     },
     handleUserOptions (command) {
       if (command === 'quit') {

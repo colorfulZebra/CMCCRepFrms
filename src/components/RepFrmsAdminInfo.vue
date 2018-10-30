@@ -23,7 +23,7 @@
         <el-col :span="8" v-for="frm in gp.frms" :key="frm.id">
           <el-card class="frm-card-item">
             <div slot="header">
-              <span>{{ frm.frmname }}</span>
+              <span>{{ frm.frmname }}{{ typeof frm.id }}</span>
               <el-dropdown szie="small" trigger="click" :hide-on-click="false" :ref="`dropdown-${gp.id}-${frm.id}`" class="frm-card-option">
                 <span class="el-dropdown-link">
                   设置<i class="el-icon-arrow-down el-icon--right"></i>
@@ -42,12 +42,14 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <h5>表头<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
-            <draggable v-model="exampleHead" @end="onEnd">
-              <el-tag v-for="(head, idx) in frm.rows" :key="head" :type="tagColors[idx % 4]" closable @close="deleteHead()">{{ head }}</el-tag>
-            </draggable>
-            <h5>列<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
-            <el-tag v-for="(col, idx) in frm.columns" :key="col.label" :type="tagColors[idx % 4]" closable @close="deleteColumn()">{{ col.label }}</el-tag>
+            <div style="height: 320px; overflow-y: auto">
+              <h5>表头<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
+              <draggable v-model="exampleHead" @end="onEnd">
+                <el-tag v-for="(head, idx) in frm.rows" :key="head" :type="tagColors[idx % 4]" closable @close="deleteHead()">{{ head }}</el-tag>
+              </draggable>
+              <h5>列<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
+              <el-tag v-for="(col, idx) in frm.columns" :key="col.label" :type="tagColors[idx % 4]" closable @close="deleteColumn()">{{ col.label }}</el-tag>
+            </div>
           </el-card>
         </el-col>
       </el-row>

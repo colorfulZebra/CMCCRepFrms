@@ -175,5 +175,24 @@ export default {
         reject(new Error('下载表参数非法'))
       }
     })
+  },
+
+  downloadAllTables (owner, tobeDownload) {
+    return new Promise((resolve, reject) => {
+      if (typeof owner === 'string' &&
+          Array.isArray(tobeDownload) && tobeDownload.length > 0) {
+        axios.post(restRepfrm.downloadAllTables, { owner, tables: tobeDownload }).then((resp) => {
+          if (resp.data.result) {
+            resolve(resp.data.data)
+          } else {
+            reject(new Error(resp.data.data))
+          }
+        }).catch((err) => {
+          reject(new Error(err))
+        })
+      } else {
+        reject(new Error('下载所有表参数非法'))
+      }
+    })
   }
 }
