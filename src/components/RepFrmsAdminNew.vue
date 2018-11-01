@@ -32,7 +32,9 @@
       <el-row>
         <el-col :span="24" v-show="newheads.length === 0">(空)</el-col>
         <el-col :span="24" v-show="newheads.length > 0">
-          <el-tag v-for="(nh, idx) in newheads" :key="nh" :type="tagColors[idx % 4]" closable @close="deleteNewHead(idx)">{{ nh }}</el-tag>
+          <draggable v-model="newheads">
+            <el-tag v-for="(nh, idx) in newheads" :key="nh" :type="tagColors[idx % 4]" closable @close="deleteNewHead(idx)">{{ nh }}</el-tag>
+          </draggable>
         </el-col>
       </el-row>
     </div>
@@ -70,10 +72,14 @@
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import { faArrowLeft, faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
+import draggable from 'vuedraggable'
 import tabledef from '../api/tabledef'
 import repfrm from '../api/reportforms'
 
 export default {
+  components: {
+    draggable
+  },
   data () {
     return {
       owner: '',
@@ -288,6 +294,9 @@ export default {
     .el-tag {
       margin-top: 10px;
       margin-right: 12px;
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 }

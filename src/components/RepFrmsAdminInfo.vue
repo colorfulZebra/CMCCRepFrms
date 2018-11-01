@@ -23,7 +23,7 @@
         <el-col :span="8" v-for="frm in gp.frms" :key="frm.id">
           <el-card class="frm-card-item">
             <div slot="header">
-              <span>{{ frm.frmname }}{{ typeof frm.id }}</span>
+              <span>{{ frm.frmname }}</span>
               <el-dropdown szie="small" trigger="click" :hide-on-click="false" :ref="`dropdown-${gp.id}-${frm.id}`" class="frm-card-option">
                 <span class="el-dropdown-link">
                   设置<i class="el-icon-arrow-down el-icon--right"></i>
@@ -42,13 +42,11 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <div style="height: 320px; overflow-y: auto">
-              <h5>表头<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
-              <draggable v-model="exampleHead" @end="onEnd">
-                <el-tag v-for="(head, idx) in frm.rows" :key="head" :type="tagColors[idx % 4]" closable @close="deleteHead()">{{ head }}</el-tag>
-              </draggable>
-              <h5>列<el-button size="small" type="text" style="margin-left:5px"><font-awesome-icon :icon="newgroupIcon"/>增加</el-button></h5>
-              <el-tag v-for="(col, idx) in frm.columns" :key="col.label" :type="tagColors[idx % 4]" closable @close="deleteColumn()">{{ col.label }}</el-tag>
+            <div style="height: 380px; overflow-y: auto">
+              <h5>表头<el-button size="small" type="text" style="margin-left:5px"></el-button></h5>
+              <el-tag v-for="(head, idx) in frm.rows" :key="head" :type="tagColors[idx % 4]">{{ head }}</el-tag>
+              <h5>列<el-button size="small" type="text" style="margin-left:5px"></el-button></h5>
+              <el-tag v-for="(col, idx) in frm.columns" :key="col.label" :type="tagColors[idx % 4]">{{ col.label }}</el-tag>
             </div>
           </el-card>
         </el-col>
@@ -57,6 +55,16 @@
         <span slot="title" class="dialog-title">复制表</span>
         <div style="margin: 5px">
           <el-form label-position="right" label-width="20%" :model="copyInfo">
+            <el-form-item label="归属集">
+              <el-select style="width:100%" v-model="copyInfo.setname" placeholder="请选择">
+                <el-option
+                  v-for="item in copySelectedGroups"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="新表名">
               <el-input v-model="copyInfo.name"></el-input>
             </el-form-item>
@@ -75,12 +83,8 @@
 import { faPlus, faTrashAlt, faCopy } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
 import { mapGetters, mapActions } from 'vuex'
-import draggable from 'vuedraggable'
 
 export default {
-  components: {
-    draggable
-  },
   data () {
     return {
       groups: [],
@@ -93,19 +97,8 @@ export default {
         setname: '',
         tabledef: {}
       },
+      copySelectedGroups: [],
       tagColors: ['', 'success', 'info', 'warning'],
-      exampleHead: [
-        { type: '', label: '西安' },
-        { type: 'success', label: '铜川' },
-        { type: 'info', label: '咸阳' },
-        { type: 'warning', label: '宝鸡' },
-        { type: '', label: '渭南' },
-        { type: 'success', label: '汉中' },
-        { type: 'info', label: '安康' },
-        { type: 'warning', label: '商洛' },
-        { type: '', label: '榆林' },
-        { type: 'success', label: '延安' }
-      ],
       newGroupname: ''
     }
   },
@@ -233,6 +226,10 @@ export default {
       this.copyInfo.name = ''
       this.copyInfo.setname = groupname
       this.copyInfo.tabledef = tabledef
+      this.copySelectedGroups = []
+      this.copySelectedGroups = this.groups.map(gp => {
+        return { value: gp.groupname, label: gp.groupname }
+      })
       this.dialogCopyRepfrm = true
     },
     confirmCopyRepfrm () {
@@ -307,9 +304,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {})
-    },
-    onEnd () {
-      console.log(this.exampleHead)
     }
   }
 }
@@ -367,9 +361,6 @@ export default {
           bottom: 10px;
           right: 5px;
           left: 5px;
-        }
-        &:hover {
-          cursor: pointer;
         }
       }
     }
