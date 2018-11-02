@@ -30,6 +30,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item><el-button type="text" @click="copyTheRepfrm(gp.groupname, frm)">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button type="text" @click="editTheRepfrm(gp.groupname, frm.frmname)">编辑&nbsp;<font-awesome-icon :icon="editIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm(gp.groupname, frm.frmname)">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
                   <!--
                   <el-dropdown-item divided>权限管理</el-dropdown-item>
@@ -80,7 +81,7 @@
 </template>
 
 <script>
-import { faPlus, faTrashAlt, faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrashAlt, faCopy, faEdit } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -139,6 +140,9 @@ export default {
     },
     copyIcon () {
       return faCopy
+    },
+    editIcon () {
+      return faEdit
     }
   },
   methods: {
@@ -231,6 +235,9 @@ export default {
         return { value: gp.groupname, label: gp.groupname }
       })
       this.dialogCopyRepfrm = true
+    },
+    editTheRepfrm (groupname, tablename) {
+      this.$router.push(`/main/repadmin/edit/${groupname}/${tablename}`)
     },
     confirmCopyRepfrm () {
       this.loading = true

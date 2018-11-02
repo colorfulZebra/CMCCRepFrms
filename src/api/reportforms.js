@@ -4,6 +4,9 @@ const restRepfrm = {
   queryByOwner: function (owner) {
     return `${baseUrlRepfrm}/query/${owner}`
   },
+  queryByName: function (owner, setname, tablename) {
+    return `${baseUrlRepfrm}/table/query?owner=${owner}&set=${setname}&table=${tablename}`
+  },
   newTableSet: `${baseUrlRepfrm}/set/new`,
   deleteTableSet: `${baseUrlRepfrm}/set/delete`,
   renameTableSet: `${baseUrlRepfrm}/set/rename`,
@@ -58,6 +61,22 @@ export default {
         }).catch((err) => {
           reject(err)
         })
+      }
+    })
+  },
+
+  getFrmByName (owner, setname, tablename) {
+    return new Promise((resolve, reject) => {
+      if (typeof owner === 'string' && owner.length > 0 &&
+          typeof setname === 'string' && setname.length > 0 &&
+          typeof tablename === 'string' && tablename.length > 0) {
+        axios.get(restRepfrm.queryByName(owner, setname, tablename)).then((response) => {
+          resolve(response)
+        }).catch((err) => {
+          reject(new Error(err))
+        })
+      } else {
+        reject(new Error('查找表定义参数非法'))
       }
     })
   },

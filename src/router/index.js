@@ -6,6 +6,7 @@ import RepFrms from '@/components/RepFrms'
 import RepFrmsAdmin from '@/components/RepFrmsAdmin'
 import RepFrmsAdminInfo from '@/components/RepFrmsAdminInfo'
 import RepFrmsAdminNew from '@/components/RepFrmsAdminNew'
+import RepFrmsAdminEdit from '@/components/RepFrmsAdminEdit'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
             {
               path: 'new/:tableset',
               component: RepFrmsAdminNew,
+              props: true
+            },
+            {
+              path: 'edit/:tableset/:tablename',
+              component: RepFrmsAdminEdit,
               props: true
             }
           ]

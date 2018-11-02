@@ -6,7 +6,7 @@
       <el-step title="3,汇总确认"></el-step>
     </el-steps>
     <div class="control-btns">
-      <el-button type="info" size="small" @click="back" plain>放弃新建报表</el-button>
+      <el-button type="info" size="small" @click="back" plain>放弃编辑报表</el-button>
       <el-button :type="nextBtn.type" size="small" @click="next" plain>{{ nextBtn.text }}<font-awesome-icon :icon="nextIcon" v-show="active < 2"/></el-button>
       <el-button type="primary" size="small" @click="prev" :disabled="active === 0" plain><font-awesome-icon :icon="prevIcon"/>上一步</el-button>
     </div>
@@ -99,8 +99,9 @@ export default {
       templateTable: []
     }
   },
-  props: ['tableset'],
+  props: ['tableset', 'tablename'],
   mounted () {
+    this.loading = true
     this.owner = this.getLoginAccount()
     let tmpMonth = `${moment().format('YYYY')}01`
     let curMonth = moment().format('YYYYMM')
@@ -111,6 +112,33 @@ export default {
     Promise.all([tabledef.getRowTypes(), tabledef.getColumns()]).then((data) => {
       this.headOptions = data[0]
       this.columnOptions = data[1]
+      repfrm.getFrmByName(this.owner, this.tableset, this.tablename).then((doc) => {
+        this.loading = false
+        if (doc.data.result) {
+          this.newheads = doc.data.data.rows
+          this.newcolumns = doc.data.data.columns
+          this.repfrmname = doc.data.data.name
+        } else {
+          this.$message({
+            type: 'error',
+            message: doc.data.data
+          })
+          this.$router.push('/main/repadmin')
+        }
+      }).catch((err) => {
+        this.loading = false
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
+        this.$router.push('/main/repadmin')
+      })
+    }).catch((err) => {
+      this.loading = false
+      this.$message({
+        type: 'error',
+        message: err.message
+      })
     })
   },
   computed: {
@@ -145,14 +173,16 @@ export default {
         this.active++
       } else if (this.active === 2) {
         this.loading = true
-        repfrm.newTable(this.owner, this.tableset, {
-          name: this.repfrmname, rows: this.newheads, columns: this.newcolumns
+        repfrm.deleteTable(this.owner, this.tableset, this.tablename).then(() => {
+          return repfrm.newTable(this.owner, this.tableset, {
+            name: this.repfrmname, rows: this.newheads, columns: this.newcolumns
+          })
         }).then((resp) => {
           this.loading = false
           if (resp.data.result) {
             this.$message({
               type: 'success',
-              message: '新建表成功'
+              message: '编辑表成功'
             })
             this.$router.push('/main/repadmin')
           } else {
