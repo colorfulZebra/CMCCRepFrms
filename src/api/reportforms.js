@@ -16,8 +16,8 @@ const restRepfrm = {
     return `${baseUrlRepfrm}/table/gen?name=${set}&table=${table}&owner=${owner}`
   },
   genAllTables: `${baseUrlRepfrm}/table/genall`,
-  downloadTable: function (owner, set, table) {
-    return `${baseUrlRepfrm}/table/download?name=${set}&table=${table}&owner=${owner}`
+  downloadTable: function (owner, set, table, transpose) {
+    return `${baseUrlRepfrm}/table/download?name=${set}&table=${table}&owner=${owner}&transpose=${transpose}`
   },
   downloadAllTables: `${baseUrlRepfrm}/table/downloadall`,
   renameTable: `${baseUrlRepfrm}/table/rename`
@@ -176,12 +176,13 @@ export default {
     })
   },
 
-  downloadTable (owner, setname, tablename) {
+  downloadTable (owner, setname, tablename, transpose) {
     return new Promise((resolve, reject) => {
       if (typeof owner === 'string' && owner.length !== 0 &&
           typeof setname === 'string' && setname.length !== 0 &&
-          typeof tablename === 'string' && tablename.length !== 0) {
-        axios.get(restRepfrm.downloadTable(owner, setname, tablename)).then((resp) => {
+          typeof tablename === 'string' && tablename.length !== 0 &&
+          typeof transpose === 'boolean') {
+        axios.get(restRepfrm.downloadTable(owner, setname, tablename, transpose)).then((resp) => {
           if (resp.data.result) {
             resolve(resp.data.data)
           } else {

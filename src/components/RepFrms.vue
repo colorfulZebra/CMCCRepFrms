@@ -27,6 +27,7 @@
         <el-table v-show="curfrmdef.columns!==undefined" :data="curfrmdef.data" max-height="600">
           <el-table-column v-for="(col,idx) in curfrmdef.columns" :key="col" :prop="'col'+idx" :label="col" :fixed="idx===0"></el-table-column>
         </el-table>
+        <el-checkbox v-show="curfrmdef.columns!==undefined" v-model="transposed" style="margin: 8px;">转置下载</el-checkbox>
         <!--
         <el-dropdown v-show="curfrmdef.columns!==undefined">
           <span class="el-dropdown-link">
@@ -47,7 +48,7 @@
             <el-button type="primary" size="small" @click="downloadFrm()" plain><font-awesome-icon :icon="downloadIcon"/></el-button>
           </el-tooltip>
           <el-tooltip content="将报表加入待下载报表集合" placement="bottom-end">
-            <el-button type="success" size="small" @click="addToDownload({ setname: curfrmdef.groupname, name: curfrmdef.frmname })" plain><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
+            <el-button type="success" size="small" @click="addToDownload({ setname: curfrmdef.groupname, name: curfrmdef.frmname, transpose: transposed })" plain><font-awesome-icon :icon="addToDownloadIcon"/></el-button>
           </el-tooltip>
         </el-button-group>
       </el-main>
@@ -68,7 +69,8 @@ export default {
       owner: '',
       repfrmsLoading: false,
       curfrmdef: {},
-      frmdefLoading: false
+      frmdefLoading: false,
+      transposed: false
     }
   },
   mounted () {
@@ -119,6 +121,7 @@ export default {
           })
         }
       })
+      this.transposed = false
       this.frmdefLoading = true
       repfrm.getTableContent(this.owner, groupname, frmname).then((resp) => {
         resp.groupname = groupname
@@ -135,7 +138,7 @@ export default {
       })
     },
     downloadFrm () {
-      repfrm.downloadTable(this.owner, this.curfrmdef.groupname, this.curfrmdef.frmname).then((resp) => {
+      repfrm.downloadTable(this.owner, this.curfrmdef.groupname, this.curfrmdef.frmname, this.transposed).then((resp) => {
         // window.location.href = `http://localhost:9000/${resp}`
         axios({
           url: `http://localhost:9000/download/${resp}`,

@@ -1,10 +1,10 @@
 const state = {
-  tobelist: []
+  tablelist: []
 }
 
 const getters = {
   getDownloadList: (state) => {
-    return state.tobelist
+    return state.tablelist
   }
 }
 
@@ -24,26 +24,26 @@ const mutations = {
   addTable: (state, table) => {
     if (typeof table.setname === 'string' && typeof table.name === 'string') {
       let flag = false
-      state.tobelist.map(tel => {
+      state.tablelist.map(tel => {
         if (tel.setname === table.setname && tel.name === table.name) flag = true
       })
-      if (!flag) state.tobelist.push(table)
+      if (!flag) state.tablelist.push(table)
     }
   },
   removeTable: (state, table) => {
     if (typeof table.setname === 'string' && typeof table.name === 'string') {
       let ridx = -1
-      for (let idx = 0; idx < state.tobelist.length; idx++) {
-        if (state.tobelist[idx].setname === table.setname && state.tobelist[idx].name === table.name) {
+      for (let idx = 0; idx < state.tablelist.length; idx++) {
+        if (state.tablelist[idx].setname === table.setname && state.tablelist[idx].name === table.name) {
           ridx = idx
           break
         }
       }
-      state.tobelist.splice(ridx, 1)
+      state.tablelist.splice(ridx, 1)
     }
   },
   clearList: (state) => {
-    state.tobelist = []
+    state.tablelist = []
   }
 }
 

@@ -163,7 +163,7 @@ export default {
     },
     downloadAll () {
       let paramTobeDownload = []
-      this.tobeDownload.map(el => paramTobeDownload.push({ set: el.setname, name: el.name }))
+      this.tobeDownload.map(el => paramTobeDownload.push({ set: el.setname, name: el.name, transpose: el.transpose }))
       repfrm.downloadAllTables(this.account, paramTobeDownload).then((file) => {
         axios({
           url: `http://localhost:9000/download/${file}`,
