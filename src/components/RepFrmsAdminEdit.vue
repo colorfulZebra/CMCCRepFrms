@@ -104,7 +104,8 @@ export default {
     this.loading = true
     this.owner = this.getLoginAccount()
     let tmpMonth = `${moment().format('YYYY')}01`
-    let curMonth = moment().format('YYYYMM')
+    let curMonth = '201809'
+    // let curMonth = moment().format('YYYYMM')
     while (tmpMonth !== curMonth) {
       this.monthTags.push(tmpMonth)
       tmpMonth = moment(tmpMonth, 'YYYYMM').add(1, 'month').format('YYYYMM')
