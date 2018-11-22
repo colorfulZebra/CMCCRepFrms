@@ -7,6 +7,7 @@ import RepFrmsAdmin from '@/components/RepFrmsAdmin'
 import RepFrmsAdminInfo from '@/components/RepFrmsAdminInfo'
 import RepFrmsAdminNew from '@/components/RepFrmsAdminNew'
 import RepFrmsAdminEdit from '@/components/RepFrmsAdminEdit'
+import Upload from '@/components/Upload'
 
 Vue.use(Router)
 
@@ -24,6 +25,10 @@ export default new Router({
         {
           path: '',
           component: RepFrms
+        },
+        {
+          path: 'upload',
+          component: Upload
         },
         {
           path: 'repadmin',
