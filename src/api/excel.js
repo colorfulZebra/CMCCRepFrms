@@ -50,7 +50,7 @@ export default {
   uploadSingleFile: function (month, path) {
     return new Promise((resolve, reject) => {
       if (monthregx.test(month) && typeof path === 'string' && path.length > 0) {
-
+        resolve(`${month}:${path}`)
       } else {
         reject(new Error('上传单个Excel文件参数非法'))
       }
