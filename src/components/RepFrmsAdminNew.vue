@@ -141,9 +141,27 @@ export default {
   methods: {
     ...mapGetters('account', ['getLoginAccount']),
     next () {
-      if (this.active === 1) {
-        this._genReportTemplate()
-        this.active++
+      if (this.active === 0) {
+        if (this.repfrmname && this.repfrmname.length > 0 && this.newheads.length > 0) {
+          this.active++
+        } else {
+          this.$message({
+            message: '请填写表名并定义行元素',
+            type: 'warning',
+            duration: 5000
+          })
+        }
+      } else if (this.active === 1) {
+        if (this.newcolumns.length > 0) {
+          this._genReportTemplate()
+          this.active++
+        } else {
+          this.$message({
+            message: '请定义列元素',
+            type: 'warning',
+            duration: 5000
+          })
+        }
       } else if (this.active === 2) {
         this.loading = true
         repfrm.newTable(this.owner, this.tableset, {
