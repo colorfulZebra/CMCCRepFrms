@@ -188,7 +188,8 @@ export default {
       }).catch((err) => {
         this.$message({
           type: 'error',
-          message: err.message
+          message: err.message,
+          duration: 6000
         })
       })
     },

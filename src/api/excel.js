@@ -50,7 +50,15 @@ export default {
   uploadSingleFile: function (month, path) {
     return new Promise((resolve, reject) => {
       if (monthregx.test(month) && typeof path === 'string' && path.length > 0) {
-        resolve(`${month}:${path}`)
+        axios.post(restExcel.uploadSingleFile, { monthID: month, excel: path }).then(doc => {
+          if (doc.data.result) {
+            resolve(doc.data)
+          } else {
+            reject(new Error(doc.data.data))
+          }
+        }).catch(err => {
+          reject(err)
+        })
       } else {
         reject(new Error('上传单个Excel文件参数非法'))
       }

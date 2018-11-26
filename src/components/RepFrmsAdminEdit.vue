@@ -189,14 +189,16 @@ export default {
           } else {
             this.$message({
               type: 'error',
-              message: resp.data.data
+              message: resp.data.data,
+              duration: 8000
             })
           }
         }).catch((err) => {
           this.loading = false
           this.$message({
             type: 'error',
-            message: err.message
+            message: err.message,
+            duration: 8000
           })
         })
       } else {

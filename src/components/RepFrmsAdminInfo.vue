@@ -183,7 +183,8 @@ export default {
         this.loading = false
         this.$message({
           type: 'error',
-          message: err.message
+          message: err.message,
+          duration: 6000
         })
       })
     },
@@ -220,7 +221,8 @@ export default {
           this.loading = false
           this.$message({
             type: 'error',
-            message: err.message
+            message: err.message,
+            duration: 6000
           })
         })
       }).catch(() => {
@@ -254,14 +256,16 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: resp.data.data
+            message: resp.data.data,
+            duration: 6000
           })
         }
         this.loading = false
       }).catch((err) => {
         this.$message({
           type: 'error',
-          message: err.message
+          message: err.message,
+          duration: 6000
         })
         this.loading = false
       })
@@ -285,14 +289,16 @@ export default {
           } else {
             this.$message({
               type: 'error',
-              message: resp.data.data
+              message: resp.data.data,
+              duration: 6000
             })
           }
         }).catch((err) => {
           this.loading = false
           this.$message({
             type: 'error',
-            message: err.message
+            message: err.message,
+            duration: 6000
           })
         })
       }).catch(() => {

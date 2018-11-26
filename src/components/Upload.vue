@@ -13,6 +13,7 @@
       multiple
       :limit="10"
       :on-success="saveToDB"
+      :on-exceed="whenExceed"
       :auto-upload="false"
       style="width:100;">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -65,7 +66,8 @@ export default {
       }).catch(err => {
         this.$message({
           message: err.message,
-          type: 'error'
+          type: 'error',
+          duration: 6000
         })
       })
       this.uploadLoading = false
@@ -97,22 +99,42 @@ export default {
         excel.uploadSingleFile(this.uploadmonth, response.file.path).then(doc => {
           if (this.uploadcount === fileList.length) {
             setTimeout(() => {
-              this.uploadmonth = ''
-              this.uploadLoading = false
-              this.$refs.uploadexcel.clearFiles()
-              this.$message({
-                message: '上传成功',
-                type: 'success'
+              excel.queryAll().then(docs => {
+                this.treedata = docs
+                this.uploadmonth = ''
+                this.uploadLoading = false
+                this.$refs.uploadexcel.clearFiles()
+                this.$message({
+                  message: '上传成功',
+                  type: 'success'
+                })
+              }).catch(err => {
+                this.uploadmonth = ''
+                this.uploadLoading = false
+                this.$refs.uploadexcel.clearFiles()
+                this.$message({
+                  type: 'error',
+                  message: err.message,
+                  duration: 8000
+                })
               })
             }, 1200)
           }
         }).catch(err => {
           this.$message({
             message: err.message,
-            type: 'error'
+            type: 'error',
+            duration: 8000
           })
         })
       }
+    },
+    whenExceed (files, fileList) {
+      this.$message({
+        type: 'warning',
+        message: `最大上传文件数量为10,您本次上传了${files.length}个,请重新选择`,
+        duration: 6000
+      })
     }
   }
 }
