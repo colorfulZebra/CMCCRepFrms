@@ -12,6 +12,7 @@ const restRepfrm = {
   renameTableSet: `${baseUrlRepfrm}/set/rename`,
   newTable: `${baseUrlRepfrm}/table/new`,
   deleteTable: `${baseUrlRepfrm}/table/delete`,
+  syncTableSet: `${baseUrlRepfrm}/table/sync`,
   genTable: function (owner, set, table) {
     return `${baseUrlRepfrm}/table/gen?name=${set}&table=${table}&owner=${owner}`
   },
@@ -127,7 +128,7 @@ export default {
           reject(new Error(err))
         })
       } else {
-        reject(new Error('创建表信息非法'))
+        reject(new Error('创建表信息参数非法'))
       }
     })
   },
@@ -143,7 +144,27 @@ export default {
           reject(new Error(err))
         })
       } else {
-        reject(new Error('删除表信息非法'))
+        reject(new Error('删除表信息参数非法'))
+      }
+    })
+  },
+
+  syncTableSet (owner, setname, tablename) {
+    return new Promise((resolve, reject) => {
+      if (owner && owner.length !== 0 &&
+          setname && setname.length !== 0 &&
+          tablename && tablename.length !== 0) {
+        axios.put(restRepfrm.syncTableSet, { owner, name: setname, table: tablename }).then(resp => {
+          if (resp.data.result) {
+            resolve(resp.data.data)
+          } else {
+            reject(new Error(resp.data.data))
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      } else {
+        reject(new Error(`同步表账期参数非法`))
       }
     })
   },

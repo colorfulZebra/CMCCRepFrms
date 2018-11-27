@@ -29,6 +29,7 @@
                   设置<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item><el-button type="text" @click="syncTheRepfrm(gp.groupname, frm.frmname)">同步&nbsp;<font-awesome-icon :icon="syncIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="text" @click="copyTheRepfrm(gp.groupname, frm)">复制&nbsp;<font-awesome-icon :icon="copyIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="text" @click="editTheRepfrm(gp.groupname, frm.frmname)">编辑&nbsp;<font-awesome-icon :icon="editIcon"/></el-button></el-dropdown-item>
                   <el-dropdown-item divided><el-button type="text" style="color: Salmon;" @click="deleteRepFrm(gp.groupname, frm.frmname)">删除&nbsp;<font-awesome-icon :icon="deleteIcon"/></el-button></el-dropdown-item>
@@ -81,7 +82,7 @@
 </template>
 
 <script>
-import { faPlus, faTrashAlt, faCopy, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrashAlt, faCopy, faEdit, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
 import repfrms from '../api/reportforms'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -143,6 +144,9 @@ export default {
     },
     editIcon () {
       return faEdit
+    },
+    syncIcon () {
+      return faSyncAlt
     }
   },
   methods: {
@@ -227,6 +231,29 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    syncTheRepfrm (groupname, tablename) {
+      this.$confirm(`确定要同步表${tablename}？该操作将会更新表的所有列元素的账期，更新后账期截止到上个月。`, '说明', {
+        confirmButtonText: '继续',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.loading = true
+        repfrms.syncTableSet(this.owner, groupname, tablename).then(resp => {
+          this.$message({
+            type: 'success',
+            message: '同步表账期成功'
+          })
+          this.refreshData()
+          this.loading = false
+        }).catch(err => {
+          this.$message({
+            type: 'error',
+            message: err.message,
+            duration: 5000
+          })
+          this.loading = false
+        })
+      }).catch(() => {})
     },
     copyTheRepfrm (groupname, tabledef) {
       this.copyInfo.name = ''
