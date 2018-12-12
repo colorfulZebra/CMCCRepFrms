@@ -56,7 +56,8 @@ export default {
       account.login(this.login).then((res) => {
         this.$message({
           message: '登录成功',
-          type: 'success'
+          type: 'success',
+          duration: 1200
         })
         this.loading = false
         this.recordAccount(this.login.account)
@@ -90,7 +91,7 @@ export default {
     width: 100%;
     height: 100%;
     .logo {
-      width: 300px;
+      width: 42%;
       height: auto;
       padding: 10px;
       margin-top: 7%;

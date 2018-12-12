@@ -1,3 +1,5 @@
+'use strict'
+
 const axios = require('axios')
 const baseUrlUser = 'http://localhost:9000/api/user'
 const restUser = {

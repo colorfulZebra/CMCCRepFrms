@@ -1,3 +1,5 @@
+'use strict'
+
 const axios = require('axios')
 const baseUrlRepfrm = 'http://localhost:9000/api/repfrm'
 const restRepfrm = {
@@ -60,7 +62,7 @@ export default {
           }
           resolve(repfrm)
         }).catch((err) => {
-          reject(err)
+          reject(new Error(err))
         })
       }
     })
@@ -161,7 +163,7 @@ export default {
             reject(new Error(resp.data.data))
           }
         }).catch(err => {
-          reject(err)
+          reject(new Error(err))
         })
       } else {
         reject(new Error(`同步表账期参数非法`))

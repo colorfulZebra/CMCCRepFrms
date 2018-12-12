@@ -7,6 +7,7 @@
           <el-menu-item index="/main"><font-awesome-icon class="icon" :icon="repfrmIcon"/>我的报表</el-menu-item>
           <el-menu-item index="/main/repadmin"><font-awesome-icon class="icon" :icon="configIcon"/>报表管理</el-menu-item>
           <el-menu-item index="/main/upload"><font-awesome-icon class="icon" :icon="uploadIcon"/>数据导入</el-menu-item>
+          <el-menu-item index="/main/indicator"><font-awesome-icon class="icon" :icon="uploadIcon"/>自定义指标</el-menu-item>
           <el-badge class="download" :value="tobeDownload.length" :max="99">
             <el-tooltip placement="bottom-end" content="查看待下载报表集合">
               <el-button size="small" type="info" @click="dialogDownloadVisible=true" circle><font-awesome-icon :icon="downloadIcon"/></el-button>

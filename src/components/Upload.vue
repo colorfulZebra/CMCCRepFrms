@@ -106,7 +106,8 @@ export default {
                 this.$refs.uploadexcel.clearFiles()
                 this.$message({
                   message: '上传成功',
-                  type: 'success'
+                  type: 'success',
+                  duration: 1200
                 })
               }).catch(err => {
                 this.uploadmonth = ''

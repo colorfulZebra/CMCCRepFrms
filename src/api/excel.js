@@ -1,3 +1,5 @@
+'use strict'
+
 const axios = require('axios')
 const baseUrlExcel = 'http://localhost:9000/api/excel'
 const restExcel = {
@@ -43,7 +45,7 @@ export default {
           reject(new Error(docs.data.data))
         }
       }).catch(err => {
-        reject(err)
+        reject(new Error(err))
       })
     })
   },
@@ -57,7 +59,7 @@ export default {
             reject(new Error(doc.data.data))
           }
         }).catch(err => {
-          reject(err)
+          reject(new Error(err))
         })
       } else {
         reject(new Error('上传单个Excel文件参数非法'))

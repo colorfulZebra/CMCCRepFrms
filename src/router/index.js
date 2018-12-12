@@ -8,6 +8,7 @@ import RepFrmsAdminInfo from '@/components/RepFrmsAdminInfo'
 import RepFrmsAdminNew from '@/components/RepFrmsAdminNew'
 import RepFrmsAdminEdit from '@/components/RepFrmsAdminEdit'
 import Upload from '@/components/Upload'
+import Indicator from '@/components/Indicator'
 
 Vue.use(Router)
 
@@ -29,6 +30,10 @@ export default new Router({
         {
           path: 'upload',
           component: Upload
+        },
+        {
+          path: 'indicator',
+          component: Indicator
         },
         {
           path: 'repadmin',

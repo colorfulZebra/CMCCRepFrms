@@ -177,7 +177,8 @@ export default {
       repfrms.newTableSet(this.owner, this.newGroupname, exsitedNames).then((reponse) => {
         this.$message({
           type: 'success',
-          message: '成功新建表集合'
+          message: '成功新建表集合',
+          duration: 1200
         })
         this.refreshData()
         this.newGroupname = ''
@@ -241,7 +242,8 @@ export default {
         repfrms.syncTableSet(this.owner, groupname, tablename).then(resp => {
           this.$message({
             type: 'success',
-            message: '同步表账期成功'
+            message: '同步表账期成功',
+            duration: 1200
           })
           this.refreshData()
           this.loading = false
@@ -277,7 +279,8 @@ export default {
         if (resp.data.result) {
           this.$message({
             type: 'success',
-            message: '复制表成功'
+            message: '复制表成功',
+            duration: 1200
           })
           this.refreshData()
         } else {
@@ -310,7 +313,8 @@ export default {
           if (resp.data.result) {
             this.$message({
               type: 'success',
-              message: '删除表成功'
+              message: '删除表成功',
+              duration: 1200
             })
             this.refreshData()
           } else {

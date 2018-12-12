@@ -1,11 +1,10 @@
+'use strict'
+
+const apiIndicator = require('./indicator').default
 const axios = require('axios')
 const baseUrlRowDef = 'http://localhost:9000/api/rowtype'
-const baseUrlIndicator = 'http://localhost:9000/api/indicator'
 const restRowType = {
   queryAll: `${baseUrlRowDef}/query`
-}
-const restIndicator = {
-  queryAll: `${baseUrlIndicator}/query`
 }
 
 export default {
@@ -37,42 +36,33 @@ export default {
             resolve([])
           }
         } else {
-          reject(data.data.data)
+          reject(new Error(data.data.data))
         }
       }).catch((err) => {
-        reject(err)
+        reject(new Error(err))
       })
     })
   },
 
   getColumns () {
     return new Promise((resolve, reject) => {
-      axios.get(restIndicator.queryAll).then((data) => {
-        if (data.data.result === true) {
-          let colTypeArr = []
-          let restData = data.data.data
-          if (Array.isArray(restData)) {
-            restData.map(el => {
-              let flag = false
-              colTypeArr.map(cel => {
-                if (cel.value === el.type) {
-                  flag = true
-                  cel.children.push({ value: el.name, label: el.name })
-                }
-              })
-              if (!flag) {
-                colTypeArr.push({ label: el.type, value: el.type, children: [ { value: el.name, label: el.name } ] })
-              }
-            })
-            resolve(colTypeArr)
-          } else {
-            resolve([])
+      apiIndicator.queryAllIndicators().then(cols => {
+        let colTypeArr = []
+        cols.map(el => {
+          let flag = false
+          colTypeArr.map(cel => {
+            if (cel.value === el.type) {
+              flag = true
+              cel.children.push({ value: el.name, label: el.name })
+            }
+          })
+          if (!flag) {
+            colTypeArr.push({ label: el.type, value: el.type, children: [ { value: el.name, label: el.name } ] })
           }
-        } else {
-          reject(data.data.data)
-        }
-      }).catch((err) => {
-        reject(err)
+        })
+        resolve(colTypeArr)
+      }).catch(err => {
+        reject(new Error(err))
       })
     })
   }

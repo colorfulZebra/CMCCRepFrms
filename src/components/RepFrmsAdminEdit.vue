@@ -183,7 +183,8 @@ export default {
           if (resp.data.result) {
             this.$message({
               type: 'success',
-              message: '编辑表成功'
+              message: '编辑表成功',
+              duration: 1200
             })
             this.$router.push('/main/repadmin')
           } else {
