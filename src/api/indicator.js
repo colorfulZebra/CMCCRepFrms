@@ -2,7 +2,7 @@
 
 const axios = require('axios')
 const baseIndicatorUrl = 'http://localhost:9000/api/indicator'
-const basePixelUrl = 'http://localhost:9000/api/tablepixel'
+const basePixelUrl = 'http://localhost:9000/api/pixel'
 
 const restIndicator = {
   queryAll: `${baseIndicatorUrl}/query`,
@@ -69,6 +69,29 @@ export default {
         }
       }).catch((err) => {
         reject(new Error(err))
+      })
+    })
+  },
+
+  formatAllIndicators () {
+    return new Promise((resolve, reject) => {
+      this.queryAllIndicators().then(docs => {
+        let formatted = {}
+        docs.map(el => {
+          if (formatted[el.type]) {
+            formatted[el.type].push({ name: el.name, rule: el.rule })
+          } else {
+            formatted[el.type] = []
+            formatted[el.type].push({ name: el.name, rule: el.rule })
+          }
+        })
+        let res = []
+        for (let tp in formatted) {
+          res.push({ name: tp, indicators: formatted[tp] })
+        }
+        resolve(res)
+      }).catch(err => {
+        reject(err)
       })
     })
   },

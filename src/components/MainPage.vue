@@ -107,6 +107,9 @@ export default {
     } else if (curFullPath.indexOf('upload') !== -1) {
       this.$router.push('/main/upload')
       this.curActivePage = '/main/upload'
+    } else if (curFullPath.indexOf('indicator') !== -1) {
+      this.$router.push('/main/indicator')
+      this.curActivePage = '/main/indicator'
     } else if (curFullPath.indexOf('main') !== -1) {
       this.$router.push('/main')
       this.curActivePage = '/main'
