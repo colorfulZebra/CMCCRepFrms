@@ -72,7 +72,7 @@
             </el-form-item>
           </el-form>
         </div>
-        <span slot="footer" class="dialog-footer">
+        <span slot="footer">
           <el-button type="primary" @click="confirmCopyRepfrm()" :disabled="copyInfo.name.length === 0">确定</el-button>
           <el-button @click="dialogCopyRepfrm = false">取消</el-button>
         </span>

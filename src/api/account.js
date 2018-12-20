@@ -18,7 +18,7 @@ export default {
         axios.post(restUser.login, { name: account, password }).then((response) => {
           if (!response.data.result) {
             if (response.data.data) {
-              reject(new Error(`error#${response.data.data}`))
+              reject(new Error(`error#${JSON.stringify(response.data.data)}`))
             } else {
               reject(new Error('error#账户或密码错误'))
             }

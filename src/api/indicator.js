@@ -22,7 +22,7 @@ export default {
         if (data.data.result === true) {
           resolve(data.data)
         } else {
-          reject(new Error(data.data.data))
+          reject(new Error(JSON.stringify(data.data.data)))
         }
       }).catch((err) => {
         reject(new Error(err))
@@ -41,7 +41,7 @@ export default {
           if (doc.data.result) {
             resolve(doc.data.data)
           } else {
-            reject(new Error(doc.data.data))
+            reject(new Error(JSON.stringify(doc.data.data)))
           }
         }).catch(err => {
           reject(new Error(err))
@@ -64,7 +64,7 @@ export default {
             resolve([])
           }
         } else {
-          reject(new Error(data.data.data))
+          reject(new Error(JSON.stringify(data.data.data)))
         }
       }).catch((err) => {
         reject(new Error(err))
@@ -120,13 +120,13 @@ export default {
           if (doc.data.result) {
             resolve(doc.data.data)
           } else {
-            reject(new Error(doc.data.data))
+            reject(new Error(JSON.stringify(doc.data.data)))
           }
         }).catch(err => {
           reject(new Error(err))
         })
       } else {
-        reject(new Error('新建计算指标参数非法'))
+        reject(new Error('新建派生指标参数非法'))
       }
     })
   }
