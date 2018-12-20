@@ -63,7 +63,7 @@
         <el-button @click="dialogNewIndicator = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-tabs v-show="indicators.length > 0">
+    <el-tabs v-model="selectedTabName" v-show="indicators.length > 0">
       <el-tab-pane v-for="idctype in indicators" :key="idctype.name" :label="idctype.name">
         <template v-for="(idc, idx) in idctype.indicators">
           <el-tooltip :key="idc.name" effect="light" :open-delay="tooltipdelay" placement="top">
@@ -75,7 +75,7 @@
                 规则：{{ idc.rule }}
               </template>
             </div>
-            <el-tag :type="tagColors[idx % 4]">{{ idc.name }}</el-tag>
+            <el-tag :type="tagColors[idx % 4]" closable @close="deleteIndicator(idc, idctype.name)">{{ idc.name }}</el-tag>
           </el-tooltip>
         </template>
       </el-tab-pane>
@@ -95,6 +95,7 @@ export default {
       tooltipdelay: 500,
       indicators: [],
       tagColors: ['', 'success', 'info', 'warning'],
+      selectedTabName: '',
       dialogNewPixel: false,
       dialogNewIndicator: false,
       frmPixel: {
@@ -149,6 +150,7 @@ export default {
         indicator.formatAllIndicators().then(docs => {
           this.indicators = docs
           this.indicatorLoading = false
+          this.selectedTabName = '0'
         }).catch(err => {
           this.$message({
             type: 'error',
@@ -237,6 +239,50 @@ export default {
         type: '',
         rule: ''
       }
+    },
+    deleteIndicator (indicatorObj, type) {
+      this.$confirm(`删除指标 "${indicatorObj.name}"？`, '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // console.log(type)
+        // console.log(indicatorObj)
+        if (indicatorObj.pixel) {
+          indicator.deleteIndicator(type, indicatorObj.name).then(resp => {
+            indicator.deletePixel(indicatorObj.name).then(resp => {
+              this.$message({
+                type: 'success',
+                message: '删除指标成功'
+              })
+              this.refresh()
+            }).catch(err => {
+              this.$message({
+                type: 'error',
+                message: err.message
+              })
+            })
+          }).catch(err => {
+            this.$message({
+              type: 'error',
+              message: err.message
+            })
+          })
+        } else {
+          indicator.deleteIndicator(type, indicatorObj.name).then(resp => {
+            this.$message({
+              type: 'success',
+              message: '删除指标成功'
+            })
+            this.refresh()
+          }).catch(err => {
+            this.$message({
+              type: 'error',
+              message: err.message
+            })
+          })
+        }
+      }).catch(() => {})
     }
   }
 }

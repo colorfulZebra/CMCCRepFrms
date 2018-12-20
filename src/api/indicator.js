@@ -6,12 +6,14 @@ const basePixelUrl = 'http://localhost:9000/api/pixel'
 
 const restIndicator = {
   queryAll: `${baseIndicatorUrl}/query`,
-  newIndicator: `${baseIndicatorUrl}/new`
+  newIndicator: `${baseIndicatorUrl}/new`,
+  deleteIndicator: `${baseIndicatorUrl}/delete`
 }
 
 const restPixel = {
   queryAll: `${basePixelUrl}/query`,
-  newPixel: `${basePixelUrl}/new`
+  newPixel: `${basePixelUrl}/new`,
+  deletePixel: `${basePixelUrl}/delete`
 }
 
 export default {
@@ -48,6 +50,24 @@ export default {
         })
       } else {
         reject(new Error('新建原子指标参数非法'))
+      }
+    })
+  },
+
+  deletePixel (name) {
+    return new Promise((resolve, reject) => {
+      if (typeof name === 'string' && name.length > 0) {
+        axios.delete(restPixel.deletePixel, { data: { name } }).then(resp => {
+          if (resp.data.result) {
+            resolve(resp.data.data)
+          } else {
+            reject(new Error(JSON.stringify(resp.data.data)))
+          }
+        }).catch(err => {
+          reject(new Error(err))
+        })
+      } else {
+        reject(new Error('删除原子指标参数非法'))
       }
     })
   },
@@ -127,6 +147,25 @@ export default {
         })
       } else {
         reject(new Error('新建派生指标参数非法'))
+      }
+    })
+  },
+
+  deleteIndicator (type, name) {
+    return new Promise((resolve, reject) => {
+      if (typeof type === 'string' &&
+          typeof name === 'string') {
+        axios.delete(restIndicator.deleteIndicator, { data: { name, type } }).then(resp => {
+          if (resp.data.result) {
+            resolve(resp.data.data)
+          } else {
+            reject(new Error(JSON.stringify(resp.data.data)))
+          }
+        }).catch(err => {
+          reject(new Error(err))
+        })
+      } else {
+        reject(new Error('删除派生指标参数非法'))
       }
     })
   }
