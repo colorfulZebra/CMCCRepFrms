@@ -20,7 +20,6 @@ export default {
     return new Promise((resolve, reject) => {
       axios.get(restPixel.queryAll).then((data) => {
         if (data.data.result === true) {
-          console.log(data.data)
           resolve(data.data)
         } else {
           reject(new Error(data.data.data))
@@ -75,21 +74,37 @@ export default {
 
   formatAllIndicators () {
     return new Promise((resolve, reject) => {
-      this.queryAllIndicators().then(docs => {
-        let formatted = {}
-        docs.map(el => {
-          if (formatted[el.type]) {
-            formatted[el.type].push({ name: el.name, rule: el.rule })
-          } else {
-            formatted[el.type] = []
-            formatted[el.type].push({ name: el.name, rule: el.rule })
+      this.queryAllPixels().then(pixs => {
+        this.queryAllIndicators().then(docs => {
+          let pixdict = {}
+          pixs.data.map(px => {
+            pixdict[px.name] = `<${px.excel}>/#${px.sheet}#/"${px.keywords}"`
+          })
+          let formatted = {}
+          docs.map(el => {
+            if (formatted[el.type]) {
+              if (el.name === el.rule) {
+                formatted[el.type].push({ name: el.name, rule: el.rule, pixel: pixdict[el.name] })
+              } else {
+                formatted[el.type].push({ name: el.name, rule: el.rule })
+              }
+            } else {
+              formatted[el.type] = []
+              if (el.name === el.rule) {
+                formatted[el.type].push({ name: el.name, rule: el.rule, pixel: pixdict[el.name] })
+              } else {
+                formatted[el.type].push({ name: el.name, rule: el.rule })
+              }
+            }
+          })
+          let res = []
+          for (let tp in formatted) {
+            res.push({ name: tp, indicators: formatted[tp] })
           }
+          resolve(res)
+        }).catch(err => {
+          reject(err)
         })
-        let res = []
-        for (let tp in formatted) {
-          res.push({ name: tp, indicators: formatted[tp] })
-        }
-        resolve(res)
       }).catch(err => {
         reject(err)
       })

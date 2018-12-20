@@ -2,7 +2,19 @@
   <div id="indicator" v-loading="indicatorLoading">
     <el-tabs>
       <el-tab-pane v-for="idctype in indicators" :key="idctype.name" :label="idctype.name">
-        <el-tag v-for="(idc, idx) in idctype.indicators" :key="idc.name" :type="tagColors[idx % 4]">{{ idc.name }}</el-tag>
+        <template v-for="(idc, idx) in idctype.indicators">
+          <el-tooltip :key="idc.name" effect="light" :open-delay="tooltipdelay" placement="top">
+            <div slot="content">
+              <template v-if="idc.pixel">
+                定义：{{ idc.pixel }}
+              </template>
+              <template v-else>
+                规则：{{ idc.rule }}
+              </template>
+            </div>
+            <el-tag :type="tagColors[idx % 4]">{{ idc.name }}</el-tag>
+          </el-tooltip>
+        </template>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -17,6 +29,7 @@ export default {
     return {
       indicatorLoading: false,
       owner: '',
+      tooltipdelay: 500,
       indicators: [],
       tagColors: ['', 'success', 'info', 'warning']
     }
