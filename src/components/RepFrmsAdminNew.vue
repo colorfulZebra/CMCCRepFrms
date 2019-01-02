@@ -102,9 +102,9 @@ export default {
   props: ['tableset'],
   mounted () {
     this.owner = this.getLoginAccount()
-    let tmpMonth = `${moment().format('YYYY')}01`
-    let curMonth = '201809'
-    // let curMonth = moment().format('YYYYMM')
+    let tmpMonth = `${moment().subtract(1, 'month').format('YYYY')}01`
+    // let curMonth = '201809'
+    let curMonth = moment().format('YYYYMM')
     while (tmpMonth !== curMonth) {
       this.monthTags.push(tmpMonth)
       tmpMonth = moment(tmpMonth, 'YYYYMM').add(1, 'month').format('YYYYMM')
